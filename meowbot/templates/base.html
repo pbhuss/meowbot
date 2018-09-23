@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}{% endblock %} | meowbot</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="icon" href="{{ url_for('static', filename='lastfm.ico') }}">
+</head>
+<body>
+    <div id="box">
+        {% block body %}
+
+        {% endblock %}
+        <p id="footer">
+            Source code available on <a href="https://github.com/pbhuss/meowbot">GitHub</a>
+        </p>
+    </div>
+</body>
+</html>

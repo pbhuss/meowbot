@@ -1,0 +1,4 @@
+slack_verification_token: token_goes_here
+client_id: client_id
+client_secret: client_secret
+cat_api_key: key_goes_here   # https://thecatapi.com/signup
