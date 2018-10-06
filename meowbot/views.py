@@ -10,7 +10,8 @@ from flask import render_template
 
 from meowbot.appcontext import get_config
 from meowbot.commands import CommandList
-from meowbot.util import quote_user_id, requires_token
+from meowbot.models import AccessToken
+from meowbot.util import quote_user_id, requires_token, get_bot_access_token
 
 
 @app.route('/')
@@ -24,15 +25,6 @@ def get_command(text):
         return split[1], split[2:]
     else:
         return None, None
-
-
-# TODO: improve Slack workspace-specific token saving / loading
-def get_bot_token(team_id):
-    with open('tokens.json', 'r') as fp:
-        for line in fp:
-            row = json.loads(line)
-            if row.get('team_id') == team_id:
-                return row['bot']['bot_access_token']
 
 
 @app.route('/meow', methods=['POST'])
@@ -51,8 +43,11 @@ def meow():
     if data['event']['text'].startswith(
         quote_user_id(data['authed_users'][0])
     ):
-        bot_token = get_bot_token(data['team_id'])
-        if not bot_token:
+        bot_access_token = get_bot_access_token(data['team_id'])
+        if not bot_access_token:
+            meowbot.log.error(
+                'Missing bot_access_token\nData: {}'.format(data)
+            )
             return Response(status=200)
         command, args = get_command(data['event']['text'])
         resp = {
@@ -75,7 +70,7 @@ def meow():
         meowbot.log.debug(resp)
         headers = {
             "Content-Type": "application/json",
-            "Authorization": "Bearer {}".format(bot_token)}
+            "Authorization": "Bearer {}".format(bot_access_token)}
         requests.post(
             'https://slack.com/api/chat.postMessage',
             headers=headers,
@@ -97,9 +92,17 @@ def authorize():
     )
     parsed = json.loads(r.text)
     if parsed['ok']:
-        with open('tokens.json', 'a') as fp:
-            fp.write(r.text)
-            fp.write('\n')
+        row = AccessToken(
+            access_token=parsed['access_token'],
+            scope=parsed['scope'],
+            user_id=parsed['user_id'],
+            team_name=parsed['team_name'],
+            team_id=parsed['team_id'],
+            bot_user_id=parsed['bot']['bot_user_id'],
+            bot_access_token=parsed['bot']['bot_access_token']
+        )
+        meowbot.db.session.add(row)
+        meowbot.db.session.commit()
         return 'Success!'
     else:
         meowbot.log.error(r.text)

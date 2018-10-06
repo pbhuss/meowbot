@@ -243,7 +243,7 @@ def no(context, *args):
     return {
         'attachments': [
             {
-                'fallback': 'deal with it',
+                'fallback': 'dealwithit',
                 'image_url': random.choice(options)
             }
         ]

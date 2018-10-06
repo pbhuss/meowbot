@@ -3,6 +3,7 @@ from functools import wraps
 from flask import Response, request, jsonify
 
 from meowbot.appcontext import get_config
+from meowbot.models import AccessToken
 
 
 class ResponseType(object):
@@ -41,3 +42,14 @@ def requires_token(f):
 
 def quote_user_id(user_id):
     return '<@{}>'.format(user_id)
+
+
+def get_bot_access_token(team_id):
+    row = AccessToken.query.filter_by(
+        team_id=team_id,
+    ).limit(
+        1
+    ).one_or_none()
+    if row:
+        return row.bot_access_token
+    return None
