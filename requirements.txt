@@ -3,3 +3,4 @@ Flask-SQLAlchemy>=2.3.2
 ics>=0.4
 PyYAML>=3.12
 uWSGI>=2.0.17
+validators>=0.12.2

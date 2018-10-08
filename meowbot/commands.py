@@ -6,9 +6,11 @@ from typing import List, Callable, Optional
 import arrow
 import ics
 import requests
+import validators
 from flask import url_for
 
 import meowbot
+from meowbot.models import Cat
 from meowbot.util import quote_user_id, get_cat_api_key
 
 
@@ -169,9 +171,28 @@ def lacroix(context, *args):
 
 @CommandList.register(
     'cat',
-    help='`cat`: gives one cat'
+    help='`cat [name]`: gives one cat',
+    aliases=['getcat']
 )
 def cat(context, *args):
+    if len(args) == 1:
+        name, = args
+        num_photos = Cat.query.filter_by(
+            name=name.lower()
+        ).count()
+        if num_photos == 0:
+            return {'text': 'No cats named {} registered'.format(name)}
+        row = Cat.query.filter_by(
+            name=name.lower()
+        ).limit(1).offset(random.randint(0, num_photos - 1)).one()
+        return {
+            'attachments': [
+                {
+                    'fallback': name,
+                    'image_url': row.url,
+                }
+            ]
+        }
     return {
         'attachments': [
             {
@@ -184,6 +205,16 @@ def cat(context, *args):
             }
         ]
     }
+
+
+@CommandList.register(
+    'listcats',
+    help='`listcats`: See all cats available for the `cat` command'
+)
+def listcats(context, *args):
+    rows = meowbot.db.session.query(Cat.name).distinct()
+    names = ', '.join((row.name for row in rows))
+    return {'text': 'Cats in database: {}'.format(names)}
 
 
 @CommandList.register(
@@ -417,6 +448,38 @@ def catnip(context, *args):
 def fact(context, *args):
     return {
         'text': requests.get('https://catfact.ninja/fact').json()['fact']
+    }
+
+
+@CommandList.register(
+    'addcat',
+    help='`addcat [name] [url]`: add a cat to the database',
+    aliases=['addacat', 'registercat']
+)
+def addcat(context, *args):
+    if len(args) != 2:
+        return {
+            'text': 'Expected 2 args (name, url). Got {}'.format(
+                len(args)
+            )
+        }
+    name, url = args
+    # TODO: figure out why URLs are wrapped in <>.
+    url = url[1:-1]
+    if not validators.url(url):
+        return {
+            'text': '`{}` is not a valid URL'.format(url)
+        }
+    row = Cat(name=name.lower(), url=url)
+    meowbot.db.session.add(row)
+    meowbot.db.session.commit()
+    return {
+        'attachments': [
+            {
+                'text': 'Registered {}!'.format(name),
+                'image_url': url,
+            }
+        ]
     }
 
 
