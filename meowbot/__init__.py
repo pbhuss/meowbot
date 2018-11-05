@@ -2,7 +2,7 @@ from flask import Flask
 from flask.logging import create_logger
 from flask_sqlalchemy import SQLAlchemy
 
-__version__ = '0.1.2'
+__version__ = '0.1.3'
 
 app = Flask(__name__, instance_relative_config=True)
 app.config.from_pyfile('config.py')

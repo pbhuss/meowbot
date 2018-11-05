@@ -101,7 +101,8 @@ def help(context, *args):
                 {'value': CommandList.get_help(command)}
                 for command in commands
             ],
-            'footer': '<{}|meowbot {}>'.format(
+            'footer': '<{}|meowbot {}> | For more help, join '
+                      '#meowbot_control'.format(
                 url_for('index', _external=True),
                 meowbot.__version__
             ),
@@ -109,7 +110,8 @@ def help(context, *args):
                 'static', filename='wallpaper_thumb.jpg', _external=True)
         }
         return {
-            'attachments': [attachment]
+            'attachments': [attachment],
+            'thread_ts': context['event']['ts']
         }
 
 
@@ -171,20 +173,34 @@ def lacroix(context, *args):
 
 @CommandList.register(
     'cat',
-    help='`cat [name]`: gives one cat',
+    help='`cat [name] [number]`: gives one cat',
     aliases=['getcat']
 )
 def cat(context, *args):
-    if len(args) == 1:
-        name, = args
+    if len(args) in (1, 2):
+        name = args[0]
         num_photos = Cat.query.filter_by(
             name=name.lower()
         ).count()
         if num_photos == 0:
             return {'text': 'No cats named {} registered'.format(name)}
+        if len(args) == 2:
+            number = args[1]
+            if not number.isnumeric():
+                return {
+                    'text': 'Second argument must be a number. '
+                            'Got `{}`'.format(number)
+                }
+            number = int(number)
+            if 1 <= number <= num_photos:
+                offset = number - 1
+            else:
+                offset = random.randint(0, num_photos - 1)
+        else:
+            offset = random.randint(0, num_photos - 1)
         row = Cat.query.filter_by(
             name=name.lower()
-        ).limit(1).offset(random.randint(0, num_photos - 1)).one()
+        ).order_by(Cat.id).limit(1).offset(offset).one()
         return {
             'attachments': [
                 {
@@ -251,19 +267,36 @@ def listcats(context, *args):
 
 @CommandList.register(
     'removecat',
-    help='`removecat [id] [name]`: delete a photo from the database'
+    help='`removecat [name] [number]`: delete a photo from the database'
 )
 def removecat(context, *args):
     if len(args) != 2:
         return {
-            'text': 'Expected 2 args (id, name). Got {}'.format(
+            'text': 'Expected 2 args (name, number). Got {}'.format(
                 len(args)
             )
         }
-    id_, name = args
-    row = Cat.query.filter_by(id=id_, name=name.lower()).one_or_none()
+    name, number = args
+    if not number.isnumeric():
+        return {
+            'text': 'Second argument must be a number. Got `{}`'.format(number)
+        }
+    number = int(number)
+    if number <= 0:
+        return {
+            'text': 'Number must be > 0. Got `{}`'.format(number)
+        }
+    row = Cat.query.filter_by(
+        name=name.lower()
+    ).order_by(
+        Cat.id
+    ).limit(1).offset(
+        int(number) - 1
+    ).one_or_none()
     if row is None:
-        return {'text': 'No rows matching id={}, name={}'.format(id_, name)}
+        return {
+            'text': 'No matching rows'
+        }
     meowbot.db.session.delete(row)
     meowbot.db.session.commit()
     return {'text': 'Successfully removed!'}

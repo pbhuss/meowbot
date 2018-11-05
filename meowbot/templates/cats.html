@@ -5,18 +5,20 @@
         <p><a href="/">Home</a></p>
         <table>
             <tr>
-                <th>ID</th>
                 <th>Name</th>
+                <th>#</th>
                 <th>URL</th>
                 <th>Preview</th>
             </tr>
-            {% for cat in cats %}
+            {% for name, rows in cats %}
+            {% for idx, row in enumerate(rows, start=1) %}
             <tr>
-                <td>{{ cat.id }}</td>
-                <td>{{ cat.name }}</td>
-                <td class="urlcol"><a href="{{ cat.url }}" target="_blank">{{ cat.url }}</a></td>
-                <td><img src="{{ cat.url }}" alt="preview" height="150"/></td>
+                <td>{{ name }}</td>
+                <td>{{ idx }}</td>
+                <td class="urlcol"><a href="{{ row.url }}" target="_blank">{{ row.url }}</a></td>
+                <td><img src="{{ row.url }}" alt="preview" height="150"/></td>
             </tr>
+            {% endfor %}
             {% endfor %}
         </table>
 {% endblock %}

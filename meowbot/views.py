@@ -1,4 +1,5 @@
 import json
+from itertools import groupby
 
 import requests
 
@@ -112,4 +113,5 @@ def authorize():
 @app.route('/cats')
 def cats():
     cats = Cat.query.order_by(Cat.name).all()
-    return render_template('cats.html', cats=cats)
+    grouped_cats = groupby(cats, lambda cat: cat.name)
+    return render_template('cats.html', cats=grouped_cats, enumerate=enumerate)
