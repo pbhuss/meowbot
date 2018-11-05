@@ -26,6 +26,11 @@ ul {
     list-style: square;
 }
 
+
+.urlcol {
+    word-break: break-all;
+}
+
 #box {
     background-color: #eeeeee;
     padding-left: 10px;

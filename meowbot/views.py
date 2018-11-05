@@ -10,7 +10,7 @@ from flask import render_template
 
 from meowbot.appcontext import get_config
 from meowbot.commands import CommandList
-from meowbot.models import AccessToken
+from meowbot.models import AccessToken, Cat
 from meowbot.util import quote_user_id, requires_token, get_bot_access_token
 
 
@@ -107,3 +107,9 @@ def authorize():
     else:
         meowbot.log.error(r.text)
         return 'Failure :(<br/>{}'.format(parsed['error'])
+
+
+@app.route('/cats')
+def cats():
+    cats = Cat.query.order_by(Cat.name).all()
+    return render_template('cats.html', cats=cats)

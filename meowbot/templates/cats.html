@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Cat View{% endblock %}
+{% block body %}
+        <h1>Cat View</h1>
+        <p><a href="/">Home</a></p>
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>URL</th>
+                <th>Preview</th>
+            </tr>
+            {% for cat in cats %}
+            <tr>
+                <td>{{ cat.id }}</td>
+                <td>{{ cat.name }}</td>
+                <td class="urlcol"><a href="{{ cat.url }}" target="_blank">{{ cat.url }}</a></td>
+                <td><img src="{{ cat.url }}" alt="preview" height="150"/></td>
+            </tr>
+            {% endfor %}
+        </table>
+{% endblock %}

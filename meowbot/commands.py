@@ -208,13 +208,65 @@ def cat(context, *args):
 
 
 @CommandList.register(
+    'addcat',
+    help='`addcat [name] [photo_url]`: add a cat to the database',
+    aliases=['addacat', 'registercat']
+)
+def addcat(context, *args):
+    if len(args) != 2:
+        return {
+            'text': 'Expected 2 args (name, url). Got {}'.format(
+                len(args)
+            )
+        }
+    name, url = args
+    # TODO: figure out why URLs are wrapped in <>.
+    url = url[1:-1]
+    if not validators.url(url):
+        return {
+            'text': '`{}` is not a valid URL'.format(url)
+        }
+    row = Cat(name=name.lower(), url=url)
+    meowbot.db.session.add(row)
+    meowbot.db.session.commit()
+    return {
+        'attachments': [
+            {
+                'text': 'Registered {}!'.format(name),
+                'image_url': url,
+            }
+        ]
+    }
+
+
+@CommandList.register(
     'listcats',
-    help='`listcats`: See all cats available for the `cat` command'
+    help='`listcats`: see all cats available for the `cat` command'
 )
 def listcats(context, *args):
     rows = meowbot.db.session.query(Cat.name).distinct()
     names = ', '.join((row.name for row in rows))
     return {'text': 'Cats in database: {}'.format(names)}
+
+
+@CommandList.register(
+    'removecat',
+    help='`removecat [id] [name]`: delete a photo from the database'
+)
+def removecat(context, *args):
+    if len(args) != 2:
+        return {
+            'text': 'Expected 2 args (id, name). Got {}'.format(
+                len(args)
+            )
+        }
+    id_, name = args
+    row = Cat.query.filter_by(id=id_, name=name.lower()).one_or_none()
+    if row is None:
+        return {'text': 'No rows matching id={}, name={}'.format(id_, name)}
+    meowbot.db.session.delete(row)
+    meowbot.db.session.commit()
+    return {'text': 'Successfully removed!'}
 
 
 @CommandList.register(
@@ -448,38 +500,6 @@ def catnip(context, *args):
 def fact(context, *args):
     return {
         'text': requests.get('https://catfact.ninja/fact').json()['fact']
-    }
-
-
-@CommandList.register(
-    'addcat',
-    help='`addcat [name] [url]`: add a cat to the database',
-    aliases=['addacat', 'registercat']
-)
-def addcat(context, *args):
-    if len(args) != 2:
-        return {
-            'text': 'Expected 2 args (name, url). Got {}'.format(
-                len(args)
-            )
-        }
-    name, url = args
-    # TODO: figure out why URLs are wrapped in <>.
-    url = url[1:-1]
-    if not validators.url(url):
-        return {
-            'text': '`{}` is not a valid URL'.format(url)
-        }
-    row = Cat(name=name.lower(), url=url)
-    meowbot.db.session.add(row)
-    meowbot.db.session.commit()
-    return {
-        'attachments': [
-            {
-                'text': 'Registered {}!'.format(name),
-                'image_url': url,
-            }
-        ]
     }
 
 

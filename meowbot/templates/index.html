@@ -3,5 +3,8 @@
 {% block body %}
         <h1>meowbot</h1>
         <p><strong>Version:</strong> {{ version }}</p>
-        <div><img src="{{ url_for('static', filename='meowbot.jpg' ) }}" width="400px"/></div>
+        <div><img src="{{ url_for('static', filename='meowbot.jpg' ) }}" width="400" alt="meowbot logo"/></div>
+        <ul>
+            <li><a href="/cats">Cat View</a></li>
+        </ul>
 {% endblock %}
