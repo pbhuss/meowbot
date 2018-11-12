@@ -2,3 +2,6 @@ slack_verification_token: token_goes_here
 client_id: client_id
 client_secret: client_secret
 cat_api_key: key_goes_here   # https://thecatapi.com/signup
+airnow_api_key: key_goes_here   # https://docs.airnowapi.org
+default_zip_code: 10001
+redis_url: 'redis://localhost:6379/0'

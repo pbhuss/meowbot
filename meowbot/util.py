@@ -1,5 +1,6 @@
 from functools import wraps
 
+import redis
 from flask import Response, request, jsonify
 
 from meowbot.appcontext import get_config
@@ -29,6 +30,19 @@ def get_verification_token():
 
 def get_cat_api_key():
     return get_config()['cat_api_key']
+
+
+def get_airnow_api_key():
+    return get_config()['airnow_api_key']
+
+
+def get_default_zip_code():
+    return get_config()['default_zip_code']
+
+
+def get_redis():
+    redis_url = get_config()['redis_url']
+    return redis.StrictRedis.from_url(redis_url)
 
 
 def requires_token(f):

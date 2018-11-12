@@ -1,4 +1,4 @@
-import datetime
+import json
 import random
 from datetime import timedelta
 from typing import List, Callable, Optional
@@ -11,7 +11,13 @@ from flask import url_for
 
 import meowbot
 from meowbot.models import Cat
-from meowbot.util import quote_user_id, get_cat_api_key
+from meowbot.util import (
+    quote_user_id,
+    get_cat_api_key,
+    get_default_zip_code,
+    get_airnow_api_key,
+    get_redis
+)
 
 
 class CommandList(object):
@@ -233,14 +239,16 @@ def addcat(context, *args):
         return {
             'text': 'Expected 2 args (name, url). Got {}'.format(
                 len(args)
-            )
+            ),
+            'thread_ts': context['event']['ts']
         }
     name, url = args
     # TODO: figure out why URLs are wrapped in <>.
     url = url[1:-1]
     if not validators.url(url):
         return {
-            'text': '`{}` is not a valid URL'.format(url)
+            'text': '`{}` is not a valid URL'.format(url),
+            'thread_ts': context['event']['ts']
         }
     row = Cat(name=name.lower(), url=url)
     meowbot.db.session.add(row)
@@ -251,7 +259,8 @@ def addcat(context, *args):
                 'text': 'Registered {}!'.format(name),
                 'image_url': url,
             }
-        ]
+        ],
+        'thread_ts': context['event']['ts']
     }
 
 
@@ -281,17 +290,17 @@ def removecat(context, *args):
         return {
             'text': 'Second argument must be a number. Got `{}`'.format(number)
         }
-    number = int(number)
-    if number <= 0:
+    offset = int(number)
+    if offset <= 0:
         return {
-            'text': 'Number must be > 0. Got `{}`'.format(number)
+            'text': 'Number must be > 0. Got `{}`'.format(offset)
         }
     row = Cat.query.filter_by(
         name=name.lower()
     ).order_by(
         Cat.id
     ).limit(1).offset(
-        int(number) - 1
+        offset - 1
     ).one_or_none()
     if row is None:
         return {
@@ -542,18 +551,22 @@ def fact(context, *args):
     aliases=['concert']
 )
 def concerts(context, *args):
-    filename = 'cache/concert_{}.ics'.format(
-        datetime.date.today().strftime('%Y-%m-%d')
-    )
-    try:
-        with open(filename, 'r') as fp:
-            cal_data = fp.read()
-    except FileNotFoundError:
-        cal_data = requests.get(
-            'https://ybgfestival.org/events/?ical=1&tribe_display=list').text
-        with open(filename, 'w') as fp:
-            fp.write(cal_data)
-    cal = ics.Calendar(cal_data)
+    redis = get_redis()
+    key = 'concertcal'
+    ical_data = redis.get(key)
+    if ical_data is None:
+        ical_data = requests.get(
+            'https://ybgfestival.org/events/?ical=1&tribe_display=list'
+        ).content
+        redis.set(key, ical_data)
+        # Expire at midnight PST
+        redis.expireat(
+            key,
+            (arrow.utcnow().to('US/Pacific') + timedelta(days=1)).replace(
+                hour=0, minute=0).timestamp
+        )
+
+    cal = ics.Calendar(ical_data.decode('utf-8'))
     events = cal.timeline.start_after(arrow.utcnow() - timedelta(hours=3))
     colors = ['#7aff33', '#33a2ff']
     return {
@@ -577,5 +590,96 @@ def concerts(context, *args):
                 ]
             }
             for event, color in zip(events, colors)
+        ]
+    }
+
+
+@CommandList.register(
+    'airquality',
+    help='`airquality [zipcode]`: get air quality information',
+    aliases=['aqi', 'airnow', 'air']
+)
+def airquality(context, *args):
+
+    if len(args) == 1:
+        zip_code, = args
+        if not zip_code.isnumeric():
+            return {
+                'text': 'Zip code must be a number. Got `{}`'.format(zip_code)
+            }
+    else:
+        zip_code = get_default_zip_code()
+
+    redis = get_redis()
+
+    key = 'aqi:{}'.format(zip_code)
+    data = redis.get(key)
+    if data is None:
+        airnow_api_key = get_airnow_api_key()
+        observation_url = (
+            'http://www.airnowapi.org/aq/observation/zipCode/current/')
+        data = requests.get(
+            observation_url,
+            params={
+                'API_KEY': airnow_api_key,
+                'distance': 25,
+                'zipCode': zip_code,
+                'format': 'application/json'
+            }
+        ).content
+        redis.set(key, data, ex=15*60)
+
+    observations = json.loads(data.decode('utf-8'))
+
+    # https://docs.airnowapi.org/aq101
+    category_color_map = {
+        1: '#00e400',  # Good - Green
+        2: '#ffff00',  # Moderate - Yellow
+        3: '#ff7e00',  # USG - Orange
+        4: '#ff0000',  # Unhealthy - Red
+        5: '#99004c',  # Very Unhealthy - Purple
+        6: '#7e0023',  # Hazardous - Maroon
+        7: '#000000',  # Unavailable - Black
+    }
+
+    parameter_map = {
+        'PM2.5': 'fine particulate matter',
+        'PM10': 'particulate matter',
+        'O3': 'ozone'
+    }
+
+    if len(observations) == 0:
+        return {'text': 'No data available for `{}`'.format(zip_code)}
+
+    return {
+        "text": "Air Quality for {}, {}:".format(
+            observations[0]['ReportingArea'],
+            observations[0]['StateCode']
+        ),
+        "attachments": [
+            {
+                "title": "{} ({})".format(
+                    observation['ParameterName'],
+                    parameter_map[observation['ParameterName']],
+                ),
+                "fallback": "{}\n{} - {}".format(
+                    observation['ParameterName'],
+                    observation['AQI'],
+                    observation['Category']['Name']
+                ),
+                "color": category_color_map[
+                    observation['Category']['Number']
+                ],
+                "text": "{} - {}".format(
+                    observation['AQI'],
+                    observation['Category']['Name']
+                ),
+                "footer": "Reported at {}{}:00 {}".format(
+                    observation['DateObserved'],
+                    observation['HourObserved'],
+                    observation['LocalTimeZone']
+                )
+            }
+            for observation in observations
         ]
     }
