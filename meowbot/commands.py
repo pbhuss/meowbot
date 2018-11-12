@@ -16,8 +16,8 @@ from meowbot.util import (
     get_cat_api_key,
     get_default_zip_code,
     get_airnow_api_key,
-    get_redis
-)
+    get_redis,
+    with_app_context)
 
 
 class CommandList(object):
@@ -88,6 +88,7 @@ import meowbot.commands_private   # noqa
     help='`help [command]`: shows all commands, or help for a particular '
          'command'
 )
+@with_app_context
 def help(context, *args):
     if args:
         name = args[0]
@@ -452,6 +453,7 @@ def highfive(context, *args):
     help='`wallpaper`: get the official meowbot wallpaper',
     aliases=['background', 'desktop']
 )
+@with_app_context
 def wallpaper(context, *args):
     return {
         'attachments': [

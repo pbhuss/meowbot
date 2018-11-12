@@ -1,9 +1,11 @@
-from functools import wraps
+from functools import wraps, lru_cache
 
 import redis
+import rq
+import yaml
 from flask import Response, request, jsonify
 
-from meowbot.appcontext import get_config
+import meowbot
 from meowbot.models import AccessToken
 
 
@@ -22,6 +24,15 @@ def get_response(type, text, attachments=None):
         response["attachments"] = attachments
 
     return jsonify(response)
+
+
+YAML_CONF_PATH = 'instance/config.yaml'
+
+
+@lru_cache()
+def get_config():
+    with open(YAML_CONF_PATH, 'r') as fp:
+        return yaml.load(fp)
 
 
 def get_verification_token():
@@ -43,6 +54,10 @@ def get_default_zip_code():
 def get_redis():
     redis_url = get_config()['redis_url']
     return redis.StrictRedis.from_url(redis_url)
+
+
+def get_queue():
+    return rq.Queue(connection=get_redis())
 
 
 def requires_token(f):
@@ -67,3 +82,11 @@ def get_bot_access_token(team_id):
     if row:
         return row.bot_access_token
     return None
+
+
+def with_app_context(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        with meowbot.app.app_context():
+            return f(*args, **kwargs)
+    return decorated
