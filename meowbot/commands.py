@@ -1,5 +1,6 @@
 import json
 import random
+import time
 from datetime import timedelta
 from typing import List, Callable, Optional
 
@@ -16,8 +17,7 @@ from meowbot.util import (
     get_cat_api_key,
     get_default_zip_code,
     get_airnow_api_key,
-    get_redis,
-    with_app_context)
+    get_redis)
 
 
 class CommandList(object):
@@ -88,7 +88,6 @@ import meowbot.commands_private   # noqa
     help='`help [command]`: shows all commands, or help for a particular '
          'command'
 )
-@with_app_context
 def help(context, *args):
     if args:
         name = args[0]
@@ -110,7 +109,7 @@ def help(context, *args):
             ],
             'footer': '<{}|meowbot {}> | For more help, join '
                       '#meowbot_control'.format(
-                url_for('index', _external=True),
+                url_for('main.index', _external=True),
                 meowbot.__version__
             ),
             'footer_icon': url_for(
@@ -378,7 +377,7 @@ def no(context, *args):
 
 @CommandList.register(
     'hmm',
-    help='`hmm`: thinking... (now with more think!)',
+    help='`hmm`: thinking...',
     aliases=['think', 'thinking']
 )
 def hmm(context, *args):
@@ -453,7 +452,6 @@ def highfive(context, *args):
     help='`wallpaper`: get the official meowbot wallpaper',
     aliases=['background', 'desktop']
 )
-@with_app_context
 def wallpaper(context, *args):
     return {
         'attachments': [
@@ -609,6 +607,10 @@ def airquality(context, *args):
             return {
                 'text': 'Zip code must be a number. Got `{}`'.format(zip_code)
             }
+    elif len(args) > 1:
+        return {
+            'text': 'Usage: `airquality [zipcode]`'
+        }
     else:
         zip_code = get_default_zip_code()
 
@@ -629,7 +631,7 @@ def airquality(context, *args):
                 'format': 'application/json'
             }
         ).content
-        redis.set(key, data, ex=15*60)
+        redis.set(key, data, ex=10*60)
 
     observations = json.loads(data.decode('utf-8'))
 
@@ -684,4 +686,67 @@ def airquality(context, *args):
             }
             for observation in observations
         ]
+    }
+
+
+@CommandList.register(
+    'poke',
+    help='`poke`: poke meowbot'
+)
+def poke(context, *args):
+    team_id = context['team_id']
+    user_id = context['event']['user']
+    ts = time.time()
+    redis = get_redis()
+    last_poke_time_key = 'poke:last:{}'.format(team_id)
+    user_count_key = 'poke:user:{}'.format(team_id)
+    last_poke_user_key = 'poke:lastuser:{}'.format(team_id)
+    last_poke_time = redis.get(last_poke_time_key)
+    redis.set(last_poke_time_key, ts)
+    last_poked_user_id = redis.get(last_poke_user_key)
+    if last_poked_user_id:
+        last_poked_user_id = last_poked_user_id.decode('utf-8')
+    redis.set(last_poke_user_key, user_id)
+    total_pokes = redis.hincrby(user_count_key, user_id)
+
+    if last_poke_time is None:
+        return {
+            'text': 'You gave poked meowbot {} times! :shookcat:\n\n'
+                    'You\'re the first to poke meowbot!'.format(
+                        total_pokes
+                    )
+        }
+
+    return {
+        'text': 'You have poked meowbot {} time{}! :shookcat:\n\n'
+                'Meowbot was last poked {} by {}'.format(
+                    total_pokes,
+                    '' if total_pokes == 1 else 's',
+                    arrow.get(float(last_poke_time)).humanize(),
+                    quote_user_id(last_poked_user_id)
+                )
+    }
+
+
+@CommandList.register(
+    'homepage',
+    help='`homepage`: link to Meowbot homepage',
+    aliases=['home'],
+    invisible=True
+)
+def homepage(context, *args):
+    return {
+        'text': url_for('main.index', _external=True)
+    }
+
+
+@CommandList.register(
+    'github',
+    help='`github`: GitHub page for Meowbot',
+    aliases=['git', 'source'],
+    invisible=True
+)
+def github(context, *args):
+    return {
+        'text': 'https://github.com/pbhuss/meowbot'
     }

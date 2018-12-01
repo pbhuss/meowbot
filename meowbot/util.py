@@ -51,6 +51,7 @@ def get_default_zip_code():
     return get_config()['default_zip_code']
 
 
+@lru_cache()
 def get_redis():
     redis_url = get_config()['redis_url']
     return redis.StrictRedis.from_url(redis_url)
@@ -90,3 +91,21 @@ def with_app_context(f):
         with meowbot.app.app_context():
             return f(*args, **kwargs)
     return decorated
+
+
+def check_auth(username, password):
+    config = get_config()
+    return (
+        username == config['admin_username']
+        and password == config['admin_password']
+    )
+
+
+def auth_response():
+    """Sends a 401 response that enables basic auth"""
+    return Response(
+        'Could not verify your access level for that URL.\n'
+        'You have to login with proper credentials',
+        status=401,
+        headers={'WWW-Authenticate': 'Basic realm="Login Required"'}
+    )

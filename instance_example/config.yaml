@@ -5,3 +5,5 @@ cat_api_key: key_goes_here   # https://thecatapi.com/signup
 airnow_api_key: key_goes_here   # https://docs.airnowapi.org
 default_zip_code: 10001
 redis_url: 'redis://localhost:6379/0'
+admin_username: admin
+admin_password: password

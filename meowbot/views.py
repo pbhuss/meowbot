@@ -4,9 +4,8 @@ from itertools import groupby
 import requests
 
 import meowbot
-from meowbot import app
 
-from flask import jsonify, request, Response
+from flask import jsonify, request, Response, Blueprint
 from flask import render_template
 
 from meowbot.models import AccessToken, Cat
@@ -14,12 +13,15 @@ from meowbot.util import requires_token, get_queue, get_config
 from meowbot.worker import process_request
 
 
-@app.route('/')
+main = Blueprint('main', __name__)
+
+
+@main.route('/')
 def index():
     return render_template('index.html', version=meowbot.__version__)
 
 
-@app.route('/meow', methods=['POST'])
+@main.route('/meow', methods=['POST'])
 @requires_token
 def meow():
     data = request.get_json()
@@ -36,7 +38,7 @@ def meow():
     return Response(status=200)
 
 
-@app.route('/authorize')
+@main.route('/authorize')
 def authorize():
     r = requests.post(
         'https://slack.com/api/oauth.access',
@@ -66,7 +68,7 @@ def authorize():
         return 'Failure :(<br/>{}'.format(parsed['error'])
 
 
-@app.route('/cats')
+@main.route('/cats')
 def cats():
     cats = Cat.query.order_by(Cat.name).all()
     grouped_cats = groupby(cats, lambda cat: cat.name)
