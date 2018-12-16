@@ -5,6 +5,11 @@
         <p><strong>Version:</strong> {{ version }}</p>
         <div><img src="{{ url_for('static', filename='meowbot.jpg' ) }}" width="400" alt="meowbot logo"/></div>
         <ul>
+            <li>
+                <a href="{{ url_for('static', filename='wallpaper.jpg') }}" target="_blank">
+                    Meowbot Wallpaper
+                </a>
+            </li>
             <li><a href="/cats">Cat View</a></li>
             <li><a href="/rq">RQ dashboard [requires auth]</a></li>
         </ul>

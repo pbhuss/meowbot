@@ -113,7 +113,7 @@ def help(context, *args):
                 meowbot.__version__
             ),
             'footer_icon': url_for(
-                'static', filename='wallpaper_thumb.jpg', _external=True)
+                'static', filename='meowbot_thumb.jpg', _external=True)
         }
         return {
             'attachments': [attachment],
@@ -448,34 +448,6 @@ def highfive(context, *args):
 
 
 @CommandList.register(
-    'wallpaper',
-    help='`wallpaper`: get the official meowbot wallpaper',
-    aliases=['background', 'desktop']
-)
-def wallpaper(context, *args):
-    return {
-        'attachments': [
-            {
-                'fallback': 'meowbot wallpaper',
-                'title': 'meowbot wallpaper :cat:',
-                'text': '<{}|Download>'.format(
-                    url_for(
-                        'static',
-                        filename='wallpaper.jpg',
-                        _external=True
-                    )
-                ),
-                'thumb_url': url_for(
-                    'static',
-                    filename='wallpaper_thumb.jpg',
-                    _external=True
-                )
-            }
-        ]
-    }
-
-
-@CommandList.register(
     'magic8',
     help='`magic8 [question]`: tells your fortune',
     aliases=['8ball']
@@ -731,8 +703,7 @@ def poke(context, *args):
 @CommandList.register(
     'homepage',
     help='`homepage`: link to Meowbot homepage',
-    aliases=['home'],
-    invisible=True
+    aliases=['home']
 )
 def homepage(context, *args):
     return {
