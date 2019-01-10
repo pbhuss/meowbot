@@ -3,6 +3,7 @@ client_id: client_id
 client_secret: client_secret
 cat_api_key: key_goes_here   # https://thecatapi.com/signup
 airnow_api_key: key_goes_here   # https://docs.airnowapi.org
+petfinder_api_key: key_goes_here  # https://www.petfinder.com/developers/api-docs
 default_zip_code: 10001
 redis_url: 'redis://localhost:6379/0'
 admin_username: admin
