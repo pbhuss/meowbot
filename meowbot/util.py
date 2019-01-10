@@ -47,6 +47,10 @@ def get_airnow_api_key():
     return get_config()['airnow_api_key']
 
 
+def get_petfinder_api_key():
+    return get_config()['petfinder_api_key']
+
+
 def get_default_zip_code():
     return get_config()['default_zip_code']
 

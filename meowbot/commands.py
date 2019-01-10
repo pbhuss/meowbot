@@ -16,6 +16,7 @@ from meowbot.util import (
     quote_user_id,
     get_cat_api_key,
     get_default_zip_code,
+    get_petfinder_api_key,
     get_airnow_api_key,
     get_redis)
 
@@ -749,4 +750,74 @@ def homepage(context, *args):
 def github(context, *args):
     return {
         'text': 'https://github.com/pbhuss/meowbot'
+    }
+
+@CommandList.register(
+    'adoptcat',
+    help='`adoptcat [zipcode]`: get cat adoption info',
+)
+def adoptcat(context, *args):
+    if len(args) == 1:
+        zip_code, = args
+        if not zip_code.isnumeric():
+            return {
+                'text': 'Zip code must be a number. Got `{}`'.format(zip_code)
+            }
+    elif len(args) > 1:
+        return {
+            'text': 'Usage: `adoptcat [zipcode]`'
+        }
+    else:
+        zip_code = get_default_zip_code()
+
+    api_key = get_petfinder_api_key()
+    petfinder_url = 'http://api.petfinder.com/pet.find'
+    r = requests.get(
+        petfinder_url,
+        params={
+                'key': api_key,
+                'output': 'basic',
+                'animal': 'cat',
+                'count': '25',
+                'location': zip_code,
+                'format': 'json'
+            }
+    )
+    data = r.json()
+
+    def pet_info(pet):
+        url = (
+            'https://www.petfinder.com/cat/'
+            '{short_name}-{pet_id}/state/city/shelter-{shelter_id}/'
+        ).format(
+            short_name=pet['name']['$t'].split(' ', 1)[0].lower(),
+            pet_id=pet['id']['$t'],
+            shelter_id=pet['shelterId']['$t']
+        )
+        photos = [
+            photo['$t']
+            for photo in pet.get(
+                'media', {}).get('photos', {}).get('photo', [])
+            if photo['@size'] == 'pn'
+        ]
+        return {
+            'basic_info': '{name} sex: {sex} age: {age} {url}'.format(
+               name=pet['name']['$t'],
+               sex=pet['sex']['$t'],
+               age=pet['age']['$t'],
+               url=url
+            ),
+            'photo': None if len(photos) == 0 else photos[0]
+        }
+
+    pets = random.choices(
+        [pet_info(pet) for pet in data['petfinder']['pets']['pet']],
+        k=5
+    )
+    return {
+        'attachments': [
+            {'text': pet['basic_info'], 'image_url': pet['photo']}
+            for pet in pets
+        ],
+        'thread_ts': context['event']['ts']
     }
