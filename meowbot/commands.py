@@ -781,7 +781,7 @@ def adoptcat(context, *args):
             'photo': None if len(photos) == 0 else photos[0]
         }
 
-    pets = random.choices(
+    pets = random.sample(
         [pet_info(pet) for pet in data['petfinder']['pets']['pet']],
         k=5
     )
