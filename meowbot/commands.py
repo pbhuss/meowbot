@@ -129,7 +129,7 @@ def help(context, *args):
 )
 def shrug(context, *args):
     return {
-        'text': '¯\_:cat:_/¯'
+        'text': r'¯\_:cat:_/¯'
     }
 
 
@@ -637,17 +637,20 @@ def weather(context, *args):
                 'title': 'Current Weather',
                 'text': '{summary}\n'
                         '{icon} {current_temperature}℉\n'.format(
-                    summary=result['hourly']['summary'],
-                    icon=icon_map.get(result['currently']['icon'], icon_default),
-                    current_temperature=int(result['currently']['temperature']),
-                ),
-                'color': color_map.get(result['currently']['icon'], color_default)
+                            summary=result['hourly']['summary'],
+                            icon=icon_map.get(
+                                result['currently']['icon'], icon_default),
+                            current_temperature=int(
+                                result['currently']['temperature']),
+                        ),
+                'color': color_map.get(
+                    result['currently']['icon'], color_default)
             },
             {
                 'title': 'This Week',
                 'fields': [
                     {
-                        'title': arrow.Arrow.utcfromtimestamp(day['time']).format('ddd'),
+                        'title': arrow.get(day['time']).format('ddd'),
                         'value': '{icon} {high}℉ / {low}℉'.format(
                             icon=icon_map.get(day['icon'], icon_default),
                             high=int(day['temperatureHigh']),
@@ -658,7 +661,8 @@ def weather(context, *args):
                     for day in result['daily']['data']
                 ],
                 'color': color_map.get(result['daily']['icon'], color_default),
-                'footer': '<https://darksky.net/poweredby/|Powered by Dark Sky>',
+                'footer': (
+                    '<https://darksky.net/poweredby/|Powered by Dark Sky>'),
             }
         ]
     }
@@ -819,6 +823,7 @@ def github(context, *args):
     return {
         'text': 'https://github.com/pbhuss/meowbot'
     }
+
 
 @CommandList.register(
     'adoptcat',
