@@ -1,9 +1,11 @@
+import json
 from functools import wraps, lru_cache
 
 import redis
 import rq
 import yaml
 from flask import Response, request, jsonify
+from geopy import Nominatim
 
 import meowbot
 from meowbot.models import AccessToken
@@ -51,8 +53,27 @@ def get_petfinder_api_key():
     return get_config()['petfinder_api_key']
 
 
+def get_darksky_api_key():
+    return get_config()['darksky_api_key']
+
+
 def get_default_zip_code():
     return get_config()['default_zip_code']
+
+
+def get_location(query):
+    redis = get_redis()
+    key = 'location:{}'.format(query)
+    if redis.exists(key):
+        raw_location = json.loads(redis.get(key).decode('utf-8'))
+    else:
+        geocoder = Nominatim(user_agent='https://github.com/pbhuss/meowbot')
+        location = geocoder.geocode(query)
+        if location is None:
+            return None
+        raw_location = location.raw
+        redis.set(key, json.dumps(raw_location), ex=30 * 24 * 60 * 60)
+    return raw_location
 
 
 @lru_cache()

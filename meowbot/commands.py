@@ -18,7 +18,7 @@ from meowbot.util import (
     get_default_zip_code,
     get_petfinder_api_key,
     get_airnow_api_key,
-    get_redis)
+    get_redis, get_darksky_api_key, get_location)
 
 
 class CommandList(object):
@@ -563,6 +563,103 @@ def concerts(context, *args):
                 ]
             }
             for event, color in zip(events, colors)
+        ]
+    }
+
+
+@CommandList.register(
+    'weather',
+    help='`weather [location]`: get weather forecast',
+    aliases=['forecast']
+)
+def weather(context, *args):
+    if len(args) >= 1:
+        query = ' '.join(args)
+    else:
+        query = get_default_zip_code()
+
+    key = 'weather:{}'.format(query)
+    redis = get_redis()
+    data = redis.get(key)
+    location = get_location(query)
+    if location is None:
+        return {'text': 'Location `{}` not found'.format(query)}
+
+    icon_map = {
+        'clear-day': '☀️',
+        'clear-night': '🌙',
+        'rain': '🌧',
+        'snow': '🌨',
+        'sleet': '🌧',
+        'wind': '💨',
+        'fog': '🌫',
+        'cloudy': '☁️',
+        'partly-cloudy-day': '⛅',
+        'partly-cloudy-night': '⛅',
+    }
+    icon_default = '🌎'
+
+    color_map = {
+        'clear-day': '#ffde5b',
+        'clear-night': '#2d2d2d',
+        'rain': '#5badff',
+        'snow': '#d6e0ff',
+        'sleet': '#5badff',
+        'wind': '#9ee1ff',
+        'fog': '#9b9b9b',
+        'cloudy': '#d6e0ff',
+        'partly-cloudy-day': '#ffde5b',
+        'partly-cloudy-night': '#2d2d2d',
+    }
+    color_default = '#5badff'
+
+    if data is None:
+        forecast_url = 'https://api.darksky.net/forecast/{api_key}/{lat},{lon}'
+        data = requests.get(
+            forecast_url.format(
+                api_key=get_darksky_api_key(),
+                lat=location['lat'],
+                lon=location['lon']
+            ),
+            params={
+                'exclude': 'minutely,alerts,flags',
+                'lang': 'en'
+            }
+        ).content
+        redis.set(key, data, ex=5*60)
+
+    result = json.loads(data.decode('utf-8'))
+
+    return {
+        'text': '*Forecast for {}*'.format(location['display_name']),
+        'attachments': [
+            {
+                'title': 'Current Weather',
+                'text': '{summary}\n'
+                        '{icon} {current_temperature}℉\n'.format(
+                    summary=result['hourly']['summary'],
+                    icon=icon_map.get(result['currently']['icon'], icon_default),
+                    current_temperature=int(result['currently']['temperature']),
+                ),
+                'color': color_map.get(result['currently']['icon'], color_default)
+            },
+            {
+                'title': 'This Week',
+                'fields': [
+                    {
+                        'title': arrow.Arrow.utcfromtimestamp(day['time']).format('ddd'),
+                        'value': '{icon} {high}℉ / {low}℉'.format(
+                            icon=icon_map.get(day['icon'], icon_default),
+                            high=int(day['temperatureHigh']),
+                            low=int(day['temperatureLow'])
+                        ),
+                        'short': True
+                    }
+                    for day in result['daily']['data']
+                ],
+                'color': color_map.get(result['daily']['icon'], color_default),
+                'footer': '<https://darksky.net/poweredby/|Powered by Dark Sky>',
+            }
         ]
     }
 
