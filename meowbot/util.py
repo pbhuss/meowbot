@@ -4,28 +4,11 @@ from functools import wraps, lru_cache
 import redis
 import rq
 import yaml
-from flask import Response, request, jsonify
+from flask import Response, request
 from geopy import Nominatim
 
 import meowbot
 from meowbot.models import AccessToken
-
-
-class ResponseType(object):
-
-    EPHEMERAL = 'ephemeral'
-    IN_CHANNEL = 'in_channel'
-
-
-def get_response(type, text, attachments=None):
-    response = {
-        "response_type": type,
-        "text": text,
-    }
-    if attachments:
-        response["attachments"] = attachments
-
-    return jsonify(response)
 
 
 YAML_CONF_PATH = 'instance/config.yaml'
