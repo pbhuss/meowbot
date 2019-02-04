@@ -80,10 +80,6 @@ class CommandList(object):
         )
 
 
-# For commands not committed to git
-import meowbot.commands_private   # noqa
-
-
 @CommandList.register(
     'help',
     help='`help [command]`: shows all commands, or help for a particular '
