@@ -1,6 +1,5 @@
 TEMPLATES_AUTO_RELOAD = True
-SQLALCHEMY_DATABASE_URI = (
-    'sqlite:////path/to/meowbot.db')
+SQLALCHEMY_DATABASE_URI = 'sqlite:///../instance/meowbot.db'
 
 
 # Don't edit below here
