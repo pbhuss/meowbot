@@ -9,7 +9,13 @@ from flask import jsonify, request, Response, Blueprint
 from flask import render_template
 
 from meowbot.models import AccessToken, Cat
-from meowbot.util import requires_token, get_queue, get_config
+from meowbot.util import (
+    requires_token,
+    get_queue,
+    get_config,
+    get_redis,
+    get_default_tv_channel
+)
 from meowbot.worker import process_request
 
 
@@ -73,3 +79,17 @@ def cats():
     cats = Cat.query.order_by(Cat.name).all()
     grouped_cats = groupby(cats, lambda cat: cat.name)
     return render_template('cats.html', cats=grouped_cats, enumerate=enumerate)
+
+
+@main.route('/tv/channel')
+def tv_channel():
+    redis = get_redis()
+    channel = redis.get('tvchannel')
+    if channel is None:
+        return get_default_tv_channel()
+    return channel
+
+
+@main.route('/tv')
+def tv():
+    return render_template('tv.html')

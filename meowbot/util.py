@@ -69,6 +69,15 @@ def get_queue():
     return rq.Queue(connection=get_redis())
 
 
+def get_channels():
+    with open('instance/channels.json', 'r', encoding='utf-8') as fp:
+        return json.load(fp)
+
+
+def get_default_tv_channel():
+    return get_config()['default_tv_channel']
+
+
 def requires_token(f):
     @wraps(f)
     def decorated(*args, **kwargs):

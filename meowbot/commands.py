@@ -18,7 +18,7 @@ from meowbot.util import (
     get_default_zip_code,
     get_petfinder_api_key,
     get_airnow_api_key,
-    get_redis, get_darksky_api_key, get_location)
+    get_redis, get_darksky_api_key, get_location, get_channels)
 
 
 class CommandList(object):
@@ -943,5 +943,139 @@ def shakespeare(context, *args):
             random.choice(first),
             random.choice(second),
             random.choice(third)
+        )
+    }
+
+
+@CommandList.register(
+    'listchannels',
+    help='`listchannels`: show available Meowbot TV channels',
+    aliases=['channels', 'showchannels', 'tvguide'],
+)
+def listchannels(context, *args):
+    channels = get_channels()
+    channel_aliases = sorted(channels.keys())
+    extra_channels = [
+        {
+            'title': 'youtube <video_id>',
+            'value': ':youtube: Youtube video',
+        },
+        {
+            'title': 'twitch <username>',
+            'value': ':twitch: Twitch stream',
+        },
+        {
+            'title': 'url <url>',
+            'value': ':ie: Specified website',
+        }
+    ]
+    attachment = {
+        'pretext': 'Available channels:',
+        'fallback': ', '.join(channel_aliases),
+        'fields': [
+            {
+                'title': alias,
+                'value': channels[alias]['name'],
+            }
+            for alias in channel_aliases
+        ] + extra_channels
+    }
+    return {
+        'attachments': [attachment],
+        'thread_ts': context['event']['ts']
+    }
+
+
+@CommandList.register(
+    'setchannel',
+    help='`setchannel`: change Meowbot TV channel',
+    aliases=['changechannel'],
+)
+def setchannel(context, *args):
+    redis = get_redis()
+    if redis.exists('killtv'):
+        return {
+            'text': (
+                'Meowbot TV has been disabled. '
+                'Contact Meowbot admin to reenable'
+            )
+        }
+
+    channels = get_channels()
+    if len(args) == 1:
+        channel, = args
+        if channel not in channels:
+            return {
+                'text': (
+                    '{} is not a valid channel.\n\n'
+                    'Available channels: {}'.format(
+                        channel,
+                        ', '.join(sorted(channels.keys()))
+                    )
+                ),
+                'thread_ts': context['event']['ts']
+            }
+        redis.set('tvchannel', channels[channel]['url'])
+        return {
+            'text': 'Changing channel to {}!'.format(
+                channels[channel]['name']
+            ),
+        }
+    elif len(args) == 2:
+        channel_type, value = args
+        if channel_type == 'url':
+            url = value[1:-1]
+            redis.set('tvchannel', url)
+            return {
+                'text': 'Changing channel to {}!'.format(url),
+            }
+        elif channel_type == 'twitch':
+            url = 'https://player.twitch.tv/?channel={}'.format(value)
+            redis.set('tvchannel', url)
+            return {
+                'text': 'Changing channel to :twitch: {}!'.format(value),
+            }
+        elif channel_type == 'youtube':
+            url = (
+                'https://www.youtube.com/embed/{video_id}?'
+                'autoplay=1&loop=1&playlist={video_id}'
+            ).format(video_id=value)
+            redis.set('tvchannel', url)
+            return {
+                'text': 'Changing channel to :youtube: {}!'.format(value),
+            }
+    return {
+        'text': 'Must provide a channel.\n\n'
+        'Available channels: {}'.format(
+            ', '.join(sorted(channels.keys()))
+        ),
+        'thread_ts': context['event']['ts']
+    }
+
+
+@CommandList.register(
+    'tv',
+    help='`tv`: watch Meowbot TV',
+    aliases=['television', 'meowtv', 'meowbottv'],
+)
+def tv(context, *args):
+    return {
+        'text': url_for('main.tv')
+    }
+
+
+@CommandList.register(
+    'killtv',
+    help='`killtv`: this kills Meowbot TV',
+    aliases=['disabletv'],
+    invisible=True
+)
+def killtv(context, *args):
+    redis = get_redis()
+    redis.set('killtv', '1')
+    redis.delete('tvchannel')
+    return {
+        'text': (
+            'Meowbot TV has been disabled. Contact Meowbot admin to reenable'
         )
     }
