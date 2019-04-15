@@ -14,7 +14,7 @@ from meowbot.models import AccessToken
 YAML_CONF_PATH = 'instance/config.yaml'
 
 
-@lru_cache()
+@lru_cache(maxsize=1)
 def get_config():
     with open(YAML_CONF_PATH, 'r') as fp:
         return yaml.load(fp)
@@ -59,7 +59,7 @@ def get_location(query):
     return raw_location
 
 
-@lru_cache()
+@lru_cache(maxsize=1)
 def get_redis():
     redis_url = get_config()['redis_url']
     return redis.StrictRedis.from_url(redis_url)
@@ -74,8 +74,12 @@ def get_channels():
         return json.load(fp)
 
 
-def get_default_tv_channel():
-    return get_config()['default_tv_channel']
+def restore_default_tv_channel():
+    channels = get_channels()
+    default_channel = get_config()['default_tv_channel']
+    url = channels[default_channel]['url']
+    get_redis().set('tvchannel', url)
+    return url
 
 
 def requires_token(f):

@@ -9,4 +9,4 @@ default_zip_code: 10001
 redis_url: 'redis://localhost:6379/0'
 admin_username: admin
 admin_password: password
-default_tv_channel: 'https://www.youtube.com/embed/hZtC9oQoHfY?autoplay=1'
+default_tv_channel: kittens

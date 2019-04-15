@@ -14,8 +14,7 @@ from meowbot.util import (
     get_queue,
     get_config,
     get_redis,
-    get_default_tv_channel
-)
+    restore_default_tv_channel)
 from meowbot.worker import process_request
 
 
@@ -86,7 +85,7 @@ def tv_channel():
     redis = get_redis()
     channel = redis.get('tvchannel')
     if channel is None:
-        return get_default_tv_channel()
+        channel = restore_default_tv_channel()
     return channel
 
 

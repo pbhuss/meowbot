@@ -18,7 +18,12 @@ from meowbot.util import (
     get_default_zip_code,
     get_petfinder_api_key,
     get_airnow_api_key,
-    get_redis, get_darksky_api_key, get_location, get_channels)
+    get_redis,
+    get_darksky_api_key,
+    get_location,
+    get_channels,
+    restore_default_tv_channel
+)
 
 
 class CommandList(object):
@@ -1073,7 +1078,7 @@ def tv(context, *args):
 def killtv(context, *args):
     redis = get_redis()
     redis.set('killtv', '1')
-    redis.delete('tvchannel')
+    restore_default_tv_channel()
     return {
         'text': (
             'Meowbot TV has been disabled. Contact Meowbot admin to reenable'
