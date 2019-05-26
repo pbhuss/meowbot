@@ -47,7 +47,7 @@ def get_default_zip_code():
 
 def get_location(query):
     redis = get_redis()
-    key = 'location:{}'.format(query)
+    key = f'location:{query}'
     if redis.exists(key):
         raw_location = json.loads(redis.get(key).decode('utf-8'))
     else:

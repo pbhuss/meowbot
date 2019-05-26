@@ -18,9 +18,7 @@ def process_request(data):
     ):
         bot_access_token = get_bot_access_token(data['team_id'])
         if not bot_access_token:
-            raise RuntimeError(
-                'Missing bot_access_token\nData: {}'.format(data)
-            )
+            raise RuntimeError(f'Missing bot_access_token\nData: {data}')
         command, args = get_command(data['event']['text'])
         resp = {
             'channel': data['event']['channel'],
@@ -43,7 +41,7 @@ def process_request(data):
             resp['thread_ts'] = data['event']['thread_ts']
         headers = {
             "Content-Type": "application/json",
-            "Authorization": "Bearer {}".format(bot_access_token)}
+            "Authorization": f"Bearer {bot_access_token}"}
         requests.post(
             'https://slack.com/api/chat.postMessage',
             headers=headers,

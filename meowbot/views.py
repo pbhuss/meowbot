@@ -70,7 +70,7 @@ def authorize():
         return 'Success!'
     else:
         meowbot.log.error(r.text)
-        return 'Failure :(<br/>{}'.format(parsed['error'])
+        return f"Failure :(<br/>{parsed['error']}"
 
 
 @main.route('/cats')

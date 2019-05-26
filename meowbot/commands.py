@@ -42,8 +42,7 @@ class CommandList(object):
     ) -> Callable:
         def inner(func):
             if cls.has_command(name):
-                return ValueError(
-                    'Command {} already registered'.format(name))
+                return ValueError(f'Command {name} already registered')
             if invisible:
                 cls.invisible_commands[name] = func
             else:
@@ -73,11 +72,9 @@ class CommandList(object):
     @classmethod
     def add_alias(cls, name: str, alias: str) -> None:
         if not cls.has_command(name):
-            raise ValueError(
-                'Command {} is not registered'.format(name))
+            raise ValueError(f'Command {name} is not registered')
         if cls.has_command(alias):
-            raise ValueError(
-                'Command {} already registered'.format(alias))
+            raise ValueError(f'Command {alias} already registered')
         cls.invisible_commands[alias] = cls.get_command(name)
         cls.help[alias] = '`{}` → {}'.format(
             alias,
@@ -96,7 +93,7 @@ def help(context, *args):
         if CommandList.has_command(name):
             text = CommandList.get_help(name)
         else:
-            text = '`{}` is not a valid command'.format(name)
+            text = f'`{name}` is not a valid command'
         return {
             'text': text
         }
@@ -169,11 +166,8 @@ def lacroix(context, *args):
         'Pamplemousse': ':grapefruit_lacroix:'
     }
     flavor = random.choice(list(choices))
-    text = '{}: I recommend {} {} La Croix'.format(
-        quote_user_id(context['event']['user']),
-        choices[flavor],
-        flavor
-    )
+    user = quote_user_id(context['event']['user'])
+    text = f'{user}: I recommend {choices[flavor]} {flavor} La Croix'
     return {
         'text': text,
     }
@@ -196,8 +190,7 @@ def cat(context, *args):
             number = args[1]
             if not number.isnumeric():
                 return {
-                    'text': 'Second argument must be a number. '
-                            'Got `{}`'.format(number)
+                    'text': f'Second argument must be a number. Got `{number}`'
                 }
             number = int(number)
             if 1 <= number <= num_photos:
@@ -239,9 +232,7 @@ def cat(context, *args):
 def addcat(context, *args):
     if len(args) != 2:
         return {
-            'text': 'Expected 2 args (name, url). Got {}'.format(
-                len(args)
-            ),
+            'text': f'Expected 2 args (name, url). Got {len(args)}',
             'thread_ts': context['event']['ts']
         }
     name, url = args
@@ -258,7 +249,7 @@ def addcat(context, *args):
     return {
         'attachments': [
             {
-                'text': 'Registered {}!'.format(name),
+                'text': f'Registered {name}!',
                 'image_url': url,
             }
         ],
@@ -283,19 +274,17 @@ def listcats(context, *args):
 def removecat(context, *args):
     if len(args) != 2:
         return {
-            'text': 'Expected 2 args (name, number). Got {}'.format(
-                len(args)
-            )
+            'text': f'Expected 2 args (name, number). Got {len(args)}'
         }
     name, number = args
     if not number.isnumeric():
         return {
-            'text': 'Second argument must be a number. Got `{}`'.format(number)
+            'text': f'Second argument must be a number. Got `{number}`'
         }
     offset = int(number)
     if offset <= 0:
         return {
-            'text': 'Number must be > 0. Got `{}`'.format(offset)
+            'text': f'Number must be > 0. Got `{offset}`'
         }
     row = Cat.query.filter_by(
         name=name.lower()
@@ -579,7 +568,7 @@ def weather(context, *args):
     else:
         query = get_default_zip_code()
 
-    key = 'weather:{}'.format(query)
+    key = f'weather:{query}'
     redis = get_redis()
     data = redis.get(key)
     location = get_location(query)
@@ -615,13 +604,11 @@ def weather(context, *args):
     color_default = '#5badff'
 
     if data is None:
-        forecast_url = 'https://api.darksky.net/forecast/{api_key}/{lat},{lon}'
+        api_key = get_darksky_api_key()
+        lat = location['lat']
+        lon = location['lon']
         data = requests.get(
-            forecast_url.format(
-                api_key=get_darksky_api_key(),
-                lat=location['lat'],
-                lon=location['lon']
-            ),
+            f'https://api.darksky.net/forecast/{api_key}/{lat},{lon}',
             params={
                 'exclude': 'minutely,alerts,flags',
                 'lang': 'en'
@@ -680,7 +667,7 @@ def airquality(context, *args):
         zip_code, = args
         if not zip_code.isnumeric():
             return {
-                'text': 'Zip code must be a number. Got `{}`'.format(zip_code)
+                'text': f'Zip code must be a number. Got `{zip_code}`'
             }
     elif len(args) > 1:
         return {
@@ -728,7 +715,7 @@ def airquality(context, *args):
     }
 
     if len(observations) == 0:
-        return {'text': 'No data available for `{}`'.format(zip_code)}
+        return {'text': f'No data available for `{zip_code}`'}
 
     return {
         "text": "Air Quality for {}, {}:".format(
@@ -773,9 +760,9 @@ def poke(context, *args):
     user_id = context['event']['user']
     ts = time.time()
     redis = get_redis()
-    last_poke_time_key = 'poke:last:{}'.format(team_id)
-    user_count_key = 'poke:user:{}'.format(team_id)
-    last_poke_user_key = 'poke:lastuser:{}'.format(team_id)
+    last_poke_time_key = f'poke:last:{team_id}'
+    user_count_key = f'poke:user:{team_id}'
+    last_poke_user_key = f'poke:lastuser:{team_id}'
     last_poke_time = redis.get(last_poke_time_key)
     redis.set(last_poke_time_key, ts)
     last_poked_user_id = redis.get(last_poke_user_key)
@@ -786,20 +773,18 @@ def poke(context, *args):
 
     if last_poke_time is None:
         return {
-            'text': 'You gave poked meowbot {} times! :shookcat:\n\n'
-                    'You\'re the first to poke meowbot!'.format(
-                        total_pokes
-                    )
+            'text': (
+                f'You have poked meowbot {total_pokes} times! :shookcat:\n\n'
+                'You\'re the first to poke meowbot!'
+            )
         }
 
+    s = '' if total_pokes == 1 else 's'
+    last_poke = arrow.get(float(last_poke_time)).humanize()
+    last_user = quote_user_id(last_poked_user_id)
     return {
-        'text': 'You have poked meowbot {} time{}! :shookcat:\n\n'
-                'Meowbot was last poked {} by {}'.format(
-                    total_pokes,
-                    '' if total_pokes == 1 else 's',
-                    arrow.get(float(last_poke_time)).humanize(),
-                    quote_user_id(last_poked_user_id)
-                )
+        'text': f'You have poked meowbot {total_pokes} time{s}! :shookcat:\n\n'
+                f'Meowbot was last poked {last_poke} by {last_user}'
     }
 
 
@@ -874,13 +859,11 @@ def adoptcat(context, *args):
                 'media', {}).get('photos', {}).get('photo', [])
             if photo['@size'] == 'pn'
         ]
+        name = pet['name']['$t']
+        sex = pet['sex']['$t']
+        age = pet['age']['$t']
         return {
-            'basic_info': '{name} sex: {sex} age: {age} {url}'.format(
-               name=pet['name']['$t'],
-               sex=pet['sex']['$t'],
-               age=pet['age']['$t'],
-               url=url
-            ),
+            'basic_info': f'{name} sex: {sex} age: {age} {url}',
             'photo': None if len(photos) == 0 else photos[0]
         }
 
@@ -1007,17 +990,13 @@ def setchannel(context, *args):
         }
 
     channels = get_channels()
+    available_channels = ', '.join(sorted(channels.keys()))
     if len(args) == 1:
         channel, = args
         if channel not in channels:
             return {
-                'text': (
-                    '{} is not a valid channel.\n\n'
-                    'Available channels: {}'.format(
-                        channel,
-                        ', '.join(sorted(channels.keys()))
-                    )
-                ),
+                'text': f'{channel} is not a valid channel.\n\n'
+                        f'Available channels: {available_channels}',
                 'thread_ts': context['event']['ts']
             }
         redis.set('tvchannel', channels[channel]['url'])
@@ -1032,13 +1011,13 @@ def setchannel(context, *args):
             url = value[1:-1]
             redis.set('tvchannel', url)
             return {
-                'text': 'Changing channel to {}!'.format(url),
+                'text': f'Changing channel to {url}!',
             }
         elif channel_type == 'twitch':
-            url = 'https://player.twitch.tv/?channel={}'.format(value)
+            url = f'https://player.twitch.tv/?channel={value}'
             redis.set('tvchannel', url)
             return {
-                'text': 'Changing channel to :twitch: {}!'.format(value),
+                'text': f'Changing channel to :twitch: {value}!',
             }
         elif channel_type == 'youtube':
             url = (
@@ -1047,13 +1026,11 @@ def setchannel(context, *args):
             ).format(video_id=value)
             redis.set('tvchannel', url)
             return {
-                'text': 'Changing channel to :youtube: {}!'.format(value),
+                'text': f'Changing channel to :youtube: {value}!',
             }
     return {
         'text': 'Must provide a channel.\n\n'
-        'Available channels: {}'.format(
-            ', '.join(sorted(channels.keys()))
-        ),
+                f'Available channels: {available_channels}',
         'thread_ts': context['event']['ts']
     }
 
