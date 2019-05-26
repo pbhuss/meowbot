@@ -84,6 +84,7 @@ docker-compose down
 * [Petfinder](https://www.petfinder.com/developers/) - Pet adoption database
 * [Dark Sky](https://darksky.net/dev) - Weather conditions & forecasts
 * [AirNow](https://docs.airnowapi.org/) - Air quality information
+* [Nominatim](https://nominatim.openstreetmap.org/) - OpenStreetMap geocoder
 
 ## Authors
 
