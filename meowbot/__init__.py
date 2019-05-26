@@ -3,12 +3,13 @@ import rq_dashboard
 from flask import Flask, request
 from flask.logging import create_logger
 
+from instance.config import REDIS_URL
 from meowbot.models import db
 from meowbot.util import auth_response, check_auth
 from meowbot.views import main
 
 
-__version__ = '0.5.1'
+__version__ = '0.6.0'
 
 
 def create_app(config_filename):
@@ -28,6 +29,7 @@ def create_app(config_filename):
 
 def register_rq_dashboard(app):
     app.config.from_object(rq_dashboard.default_settings)
+    app.config['RQ_DASHBOARD_REDIS_URL'] = REDIS_URL
 
     @rq_dashboard.blueprint.before_request
     def requires_auth():

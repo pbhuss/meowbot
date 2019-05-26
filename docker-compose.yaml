@@ -1,0 +1,37 @@
+version: "2"
+services:
+
+  redis:
+    image: redis:latest
+    command: redis-server --appendonly yes
+    volumes:
+      - ./data:/data
+
+  flask:
+    image: meowbot-flask
+    build:
+      context: .
+      dockerfile: Dockerfile-flask
+    command: uwsgi --ini instance/meowbot.ini
+    volumes:
+      - ./:/usr/src/app
+    depends_on:
+      - redis
+
+  worker:
+    image: meowbot-flask
+    command: rq worker -c instance.config
+    volumes:
+      - ./:/usr/src/app
+    depends_on:
+      - redis
+
+  nginx:
+    image: meowbot-nginx
+    build:
+      context: .
+      dockerfile: Dockerfile-nginx
+    ports:
+      - "1338:443"
+    depends_on:
+      - flask

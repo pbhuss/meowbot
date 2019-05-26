@@ -8,6 +8,7 @@ from flask import Response, request
 from geopy import Nominatim
 
 import meowbot
+from instance.config import REDIS_URL
 from meowbot.models import AccessToken
 
 
@@ -17,7 +18,7 @@ YAML_CONF_PATH = 'instance/config.yaml'
 @lru_cache(maxsize=1)
 def get_config():
     with open(YAML_CONF_PATH, 'r') as fp:
-        return yaml.load(fp)
+        return yaml.safe_load(fp)
 
 
 def get_verification_token():
@@ -61,8 +62,7 @@ def get_location(query):
 
 @lru_cache(maxsize=1)
 def get_redis():
-    redis_url = get_config()['redis_url']
-    return redis.StrictRedis.from_url(redis_url)
+    return redis.StrictRedis.from_url(REDIS_URL)
 
 
 def get_queue():

@@ -5,7 +5,7 @@ ics>=0.4
 PyYAML>=3.12
 redis>=2.10.6
 requests>=2.21.0
-rq<1.0    # <1.0 required for rq-dashboard https://github.com/eoranged/rq-dashboard/issues/172
+rq>=1.0
 rq-dashboard>=0.3.12
 uWSGI>=2.0.17
 validators>=0.12.2
