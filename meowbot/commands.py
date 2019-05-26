@@ -11,6 +11,13 @@ import validators
 from flask import url_for
 
 import meowbot
+from meowbot.constants import (
+    Emoji,
+    magic_eight_ball_options,
+    shakespeare_insult_start,
+    shakespeare_insult_middle,
+    shakespeare_insult_end
+)
 from meowbot.models import Cat
 from meowbot.util import (
     quote_user_id,
@@ -127,7 +134,7 @@ def help(context, *args):
 )
 def shrug(context, *args):
     return {
-        'text': r'¯\_:cat:_/¯'
+        'text': rf'¯\_{Emoji.CAT}_/¯'
     }
 
 
@@ -148,7 +155,7 @@ def ping(context, *args):
 )
 def meow(context, *args):
     return {
-        'text': 'Meow! :catkool:'
+        'text': f'Meow! {Emoji.CATKOOL}'
     }
 
 
@@ -157,19 +164,11 @@ def meow(context, *args):
     help='`lacroix`: meowbot recommends a flavor'
 )
 def lacroix(context, *args):
-    choices = {
-        'Lime': ':lime_lacroix:',
-        'Tangerine': ':tangerine_lacroix:',
-        'Passionfruit': ':passionfruit_lacroix:',
-        'Apricot': ':apricot_lacroix:',
-        'Mango': ':mango_lacroix:',
-        'Pamplemousse': ':grapefruit_lacroix:'
-    }
-    flavor = random.choice(list(choices))
+    flavor = random.choice(list(Emoji.lacroix()))
+    flavor_name = flavor.name.split('_')[0].capitalize()
     user = quote_user_id(context['event']['user'])
-    text = f'{user}: I recommend {choices[flavor]} {flavor} La Croix'
     return {
-        'text': text,
+        'text': f'{user}: I recommend {flavor} {flavor_name} La Croix'
     }
 
 
@@ -337,7 +336,7 @@ def lanny(context, *args):
 )
 def poop(context, *args):
     return {
-        'text': ':smirk_cat::poop:'
+        'text': f'{Emoji.SMIRK_CAT}{Emoji.POOP}'
     }
 
 
@@ -372,36 +371,8 @@ def no(context, *args):
     aliases=['think', 'thinking']
 )
 def hmm(context, *args):
-    options = [
-        ':thinking_face:',
-        ':mthinking:',
-        ':think_nose:',
-        ':blobthinkingeyes:',
-        ':blobthinkingcool:',
-        ':think_pirate:',
-        ':blobthinkingglare:',
-        ':thinkingwithblobs:',
-        ':overthink:',
-        ':thinkcasso:',
-        ':blobthinkingfast:',
-        ':thonk:',
-        ':blobthonkang:',
-        ':thonking:',
-        ':thinkeng:',
-        ':blobhyperthink:',
-        ':blobthinkingsmirk:',
-        ':think_hand:',
-        ':think_fish:',
-        ':think_pent:',
-        ':thinksylvania:',
-        ':thinkingthinkingthinking:',
-        ':think_yin_yang:',
-        ':think_eyebrows:',
-        ':thinking_rotate:',
-        ':blobhyperthinkfast:',
-    ]
     return {
-        'text': random.choice(options)
+        'text': str(random.choice(list(Emoji.thinking())))
     }
 
 
@@ -444,35 +415,10 @@ def highfive(context, *args):
     aliases=['8ball']
 )
 def magic8(context, *args):
-    options = [
-        "It is certain",
-        "It is decidedly so",
-        "Without a doubt",
-        "Yes definitely",
-        "You may rely on it",
-        "You can count on it",
-        "As I see it, yes",
-        "Most likely",
-        "Outlook good",
-        "Yes",
-        "Signs point to yes",
-        "Absolutely",
-        "Reply hazy try again",
-        "Ask again later",
-        "Better not tell you now",
-        "Cannot predict now",
-        "Concentrate and ask again",
-        "Don't count on it",
-        "My reply is no",
-        "My sources say no",
-        "Outlook not so good",
-        "Very doubtful",
-        "Chances aren't good"
-    ]
     text = '{} asked:\n>{}\n{}'.format(
         quote_user_id(context['event']['user']),
         ' '.join(args),
-        random.choice(options)
+        random.choice(magic_eight_ball_options)
     )
     return {
         'text': text
@@ -488,7 +434,7 @@ def catnip(context, *args):
         'attachments': [
             {
                 'fallback': 'catnip',
-                'pretext': 'Oh no! You gave meowbot catnip :herb:',
+                'pretext': f'Oh no! You gave meowbot catnip {Emoji.HERB}',
                 'image_url': (
                     'https://media.giphy.com/media/DX6y0ENWjEGPe/giphy.gif')
             }
@@ -576,18 +522,18 @@ def weather(context, *args):
         return {'text': 'Location `{}` not found'.format(query)}
 
     icon_map = {
-        'clear-day': '☀️',
-        'clear-night': '🌙',
-        'rain': '🌧',
-        'snow': '🌨',
-        'sleet': '🌧',
-        'wind': '💨',
-        'fog': '🌫',
-        'cloudy': '☁️',
-        'partly-cloudy-day': '⛅',
-        'partly-cloudy-night': '⛅',
+        'clear-day': Emoji.SUNNY,
+        'clear-night': Emoji.CRESCENT_MOON,
+        'rain': Emoji.RAIN_CLOUD,
+        'snow': Emoji.SNOW_CLOUD,
+        'sleet': Emoji.RAIN_CLOUD,
+        'wind': Emoji.WIND_BLOWING_FACE,
+        'fog': Emoji.FOG,
+        'cloudy': Emoji.CLOUD,
+        'partly-cloudy-day': Emoji.PARTLY_SUNNY,
+        'partly-cloudy-night': Emoji.PARTLY_SUNNY,
     }
-    icon_default = '🌎'
+    icon_default = Emoji.EARTH_AFRICA
 
     color_map = {
         'clear-day': '#ffde5b',
@@ -774,8 +720,8 @@ def poke(context, *args):
     if last_poke_time is None:
         return {
             'text': (
-                f'You have poked meowbot {total_pokes} times! :shookcat:\n\n'
-                'You\'re the first to poke meowbot!'
+                f'You have poked meowbot 1 time! {Emoji.SHOOKCAT}'
+                '\n\nYou\'re the first to poke meowbot!'
             )
         }
 
@@ -783,8 +729,9 @@ def poke(context, *args):
     last_poke = arrow.get(float(last_poke_time)).humanize()
     last_user = quote_user_id(last_poked_user_id)
     return {
-        'text': f'You have poked meowbot {total_pokes} time{s}! :shookcat:\n\n'
-                f'Meowbot was last poked {last_poke} by {last_user}'
+        'text': f'You have poked meowbot {total_pokes} time{s}! '
+                f'{Emoji.SHOOKCAT}\n\nMeowbot was last poked {last_poke} by '
+                f'{last_user}'
     }
 
 
@@ -885,52 +832,12 @@ def adoptcat(context, *args):
     help='`shakespeare`: generates a Shakespearean insult'
 )
 def shakespeare(context, *args):
-    first = [
-        'artless', 'bawdy', 'beslubbering', 'bootless', 'churlish', 'cockered',
-        'clouted', 'craven', 'currish', 'dankish', 'dissembling', 'droning',
-        'errant', 'fawning', 'fobbing', 'froward', 'frothy', 'gleeking',
-        'goatish', 'gorbellied', 'impertinent', 'infectious', 'jarring',
-        'loggerheaded', 'lumpish', 'mammering', 'mangled', 'mewling',
-        'paunchy', 'pribbling', 'puking', 'puny', 'qualling', 'rank', 'reeky',
-        'roguish', 'ruttish', 'saucy', 'spleeny', 'spongy', 'surly',
-        'tottering', 'unmuzzled', 'vain', 'venomed', 'villainous', 'warped',
-        'wayward', 'weedy', 'yeasty'
-    ]
-
-    second = [
-        'base-court', 'bat-fowling', 'beef-witted', 'beetle-headed',
-        'boil-brained', 'clapper-clawed', 'clay-brained', 'common-kissing',
-        'crook-pated', 'dismal-dreaming', 'dizzy-eyed', 'doghearted',
-        'dread-bolted', 'earth-vexing', 'elf-skinned', 'fat-kidneyed',
-        'fen-sucked', 'flap-mouthed', 'fly-bitten', 'folly-fallen',
-        'fool-born', 'full-gorged', 'guts-griping', 'half-faced',
-        'hasty-witted', 'hedge-born', 'hell-hated', 'idle-headed',
-        'ill-breeding', 'ill-nurtured', 'knotty-pated', 'milk-livered',
-        'motley-minded', 'onion-eyed', 'plume-plucked', 'pottle-deep',
-        'pox-marked', 'reeling-ripe', 'rough-hewn', 'rude-growing', 'rump-fed',
-        'shard-borne', 'sheep-biting', 'spur-galled', 'swag-bellied',
-        'tardy-gaited', 'tickle-brained', 'toad-spotted', 'unchin-snouted',
-        'weather-bitten'
-    ]
-
-    third = [
-        'apple-john', 'baggage', 'barnacle', 'bladder', 'boar-pig', 'bugbear',
-        'bum-bailey', 'canker-blossom', 'clack-dish', 'clotpole', 'coxcomb',
-        'codpiece', 'death-token', 'dewberry', 'flap-dragon', 'flax-wench',
-        'flirt-gill', 'foot-licker', 'fustilarian', 'giglet', 'gudgeon',
-        'haggard', 'harpy', 'hedge-pig', 'horn-beast', 'hugger-mugger',
-        'joithead', 'lewdster', 'lout', 'maggot-pie', 'malt-worm', 'mammet',
-        'measle', 'minnow', 'miscreant', 'moldwarp', 'mumble-news', 'nut-hook',
-        'pigeon-egg', 'pignut', 'puttock', 'pumpion', 'ratsbane', 'scut',
-        'skainsmate', 'strumpet', 'varlot', 'vassal', 'whey-face', 'wagtail'
-    ]
-
     return {
-        'text': '{}Thou {} {} {}'.format(
+        'text': '{}thou {} {} {}'.format(
             ' '.join(args) + ' ' if len(args) > 0 else '',
-            random.choice(first),
-            random.choice(second),
-            random.choice(third)
+            random.choice(shakespeare_insult_start),
+            random.choice(shakespeare_insult_middle),
+            random.choice(shakespeare_insult_end)
         )
     }
 
@@ -946,15 +853,15 @@ def listchannels(context, *args):
     extra_channels = [
         {
             'title': 'youtube <video_id>',
-            'value': ':youtube: Youtube video',
+            'value': f'{Emoji.YOUTUBE} Youtube video',
         },
         {
             'title': 'twitch <username>',
-            'value': ':twitch: Twitch stream',
+            'value': f'{Emoji.TWITCH} Twitch stream',
         },
         {
             'title': 'url <url>',
-            'value': ':ie: Specified website',
+            'value': f'{Emoji.IE} Specified website',
         }
     ]
     attachment = {
@@ -1017,7 +924,7 @@ def setchannel(context, *args):
             url = f'https://player.twitch.tv/?channel={value}'
             redis.set('tvchannel', url)
             return {
-                'text': f'Changing channel to :twitch: {value}!',
+                'text': f'Changing channel to {Emoji.TWITCH} {value}!',
             }
         elif channel_type == 'youtube':
             url = (
@@ -1026,7 +933,7 @@ def setchannel(context, *args):
             ).format(video_id=value)
             redis.set('tvchannel', url)
             return {
-                'text': f'Changing channel to :youtube: {value}!',
+                'text': f'Changing channel to {Emoji.YOUTUBE} {value}!',
             }
     return {
         'text': 'Must provide a channel.\n\n'
