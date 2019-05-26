@@ -19,7 +19,7 @@ Create a new Slack app at https://api.slack.com/app.
 * Go to `Features → Event Subscriptions`
     * Enable events for `https://[your-server]:[port]/meow`
     * Meowbot uses port 1338 by default
-    * Subscribe to the Bot Event named `app_mention`
+    * Subscribe to the Bot Events named `app_mention` and `message.im`
 * Go to `Features → Bot Users`
     * Create a bot user with display name and username `meowbot`
 * Go to `Features → OAuth & Permissions`
