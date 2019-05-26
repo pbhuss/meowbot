@@ -90,7 +90,7 @@ docker-compose down
 * **Peter Huss** - [pbhuss](https://github.com/pbhuss)
 
 See also the list of
-[contributors](https://github.com/your/project/contributors) who participated
+[contributors](https://github.com/pbhuss/meowbot/contributors) who participated
 in this project.
 
 ## License
