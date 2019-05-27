@@ -70,7 +70,7 @@ class CommandList(object):
     def get_help(cls, name: str) -> Optional[str]:
         if not cls.has_command(name):
             return None
-        return cls.help.get(name, '`{}`: no help available'.format(name))
+        return cls.help.get(name, f'`{name}`: no help available')
 
     @classmethod
     def has_command(cls, name: str) -> bool:
@@ -145,7 +145,8 @@ def shrug(context, *args):
 )
 def ping(context, *args):
     return {
-        'text': 'pong!'
+        'text': 'pong!',
+        'icon_emoji': f'{Emoji.PING_PONG}'
     }
 
 
@@ -202,22 +203,24 @@ def cat(context, *args):
             name=name.lower()
         ).order_by(Cat.id).limit(1).offset(offset).one()
         return {
-            'attachments': [
+            'blocks': [
                 {
-                    'fallback': name,
+                    'type': 'image',
                     'image_url': row.url,
+                    'alt_text': name,
                 }
             ]
         }
     return {
-        'attachments': [
+        'blocks': [
             {
-                'fallback': 'cat gif',
+                'type': 'image',
                 'image_url': requests.head(
                     'https://api.thecatapi.com/v1/images/search?'
                     'format=src&mime_types=image/gif',
                     headers={'x-api-key': get_cat_api_key()}
-                ).headers['Location']
+                ).headers['Location'],
+                'alt_text': 'cat gif'
             }
         ]
     }
@@ -325,7 +328,9 @@ def lanny(context, *args):
             {
                 'text': text
             }
-        ]
+        ],
+        'icon_emoji': f'{Emoji.LANNYPARROT}',
+        'username': 'Lannybot'
     }
 
 
@@ -336,7 +341,8 @@ def lanny(context, *args):
 )
 def poop(context, *args):
     return {
-        'text': f'{Emoji.SMIRK_CAT}{Emoji.POOP}'
+        'icon_emoji': f'{Emoji.SMIRK_CAT}',
+        'text': f'{Emoji.POOP}'
     }
 
 
@@ -356,10 +362,11 @@ def no(context, *args):
         'https://media.giphy.com/media/xg0nPTCKIPJRe/giphy.gif',
     ]
     return {
-        'attachments': [
+        'blocks': [
             {
-                'fallback': 'dealwithit',
-                'image_url': random.choice(options)
+                'type': 'image',
+                'image_url': random.choice(options),
+                'alt_text': 'dealwithit',
             }
         ]
     }
@@ -382,11 +389,12 @@ def hmm(context, *args):
 )
 def nyan(context, *args):
     return {
-        'attachments': [
+        'blocks': [
             {
-                'fallback': 'nyan cat',
+                'type': 'image',
                 'image_url': (
-                    'https://media.giphy.com/media/sIIhZliB2McAo/giphy.gif')
+                    'https://media.giphy.com/media/sIIhZliB2McAo/giphy.gif'),
+                'alt_text': 'nyan cat',
             }
         ]
     }
@@ -399,11 +407,12 @@ def nyan(context, *args):
 )
 def highfive(context, *args):
     return {
-        'attachments': [
+        'blocks': [
             {
-                'fallback': 'high five',
+                'type': 'image',
                 'image_url': (
-                    'https://media.giphy.com/media/10ZEx0FoCU2XVm/giphy.gif')
+                    'https://media.giphy.com/media/10ZEx0FoCU2XVm/giphy.gif'),
+                'alt_text': 'high five',
             }
         ]
     }
@@ -421,7 +430,8 @@ def magic8(context, *args):
         random.choice(magic_eight_ball_options)
     )
     return {
-        'text': text
+        'text': text,
+        'icon_emoji': f'{Emoji.EIGHT_BALL}'
     }
 
 
@@ -431,12 +441,16 @@ def magic8(context, *args):
 )
 def catnip(context, *args):
     return {
-        'attachments': [
+        'blocks': [
             {
-                'fallback': 'catnip',
-                'pretext': f'Oh no! You gave meowbot catnip {Emoji.HERB}',
+                'type': 'image',
+                'title': {
+                    'type': 'plain_text',
+                    'text': f'Oh no! You gave meowbot catnip {Emoji.HERB}',
+                },
                 'image_url': (
-                    'https://media.giphy.com/media/DX6y0ENWjEGPe/giphy.gif')
+                    'https://media.giphy.com/media/DX6y0ENWjEGPe/giphy.gif'),
+                'alt_text': 'catnip',
             }
         ]
     }
@@ -719,9 +733,10 @@ def poke(context, *args):
 
     if last_poke_time is None:
         return {
+            'icon_emoji': f'{Emoji.SHOOKCAT}',
             'text': (
-                f'You have poked meowbot 1 time! {Emoji.SHOOKCAT}'
-                '\n\nYou\'re the first to poke meowbot!'
+                f'You have poked meowbot 1 time!\n\n'
+                'You\'re the first to poke meowbot!'
             )
         }
 
@@ -729,9 +744,9 @@ def poke(context, *args):
     last_poke = arrow.get(float(last_poke_time)).humanize()
     last_user = quote_user_id(last_poked_user_id)
     return {
-        'text': f'You have poked meowbot {total_pokes} time{s}! '
-                f'{Emoji.SHOOKCAT}\n\nMeowbot was last poked {last_poke} by '
-                f'{last_user}'
+        'icon_emoji': f'{Emoji.SHOOKCAT}',
+        'text': f'You have poked meowbot {total_pokes} time{s}!\n\n'
+                f'Meowbot was last poked {last_poke} by {last_user}'
     }
 
 
@@ -967,4 +982,15 @@ def killtv(context, *args):
         'text': (
             'Meowbot TV has been disabled. Contact Meowbot admin to reenable'
         )
+    }
+
+
+@CommandList.register(
+    'dog',
+    invisible=True
+)
+def dog(context, *args):
+    return {
+        'text': 'no',
+        'icon_emoji': f'{Emoji.MONKACAT}'
     }

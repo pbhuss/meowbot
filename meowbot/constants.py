@@ -10,6 +10,7 @@ class Emoji(Enum):
     CATKOOL = 'catkool'
     SMIRK_CAT = 'smirk_cat'
     SHOOKCAT = 'shookcat'
+    MONKACAT = 'monkacat'
     POOP = 'poop'
     HERB = 'herb'
     YOUTUBE = 'youtube'
@@ -20,6 +21,9 @@ class Emoji(Enum):
     NASA = 'nasa'
     GIRAFFE = 'giraffe'
     BIRB = 'birb'
+    PING_PONG = 'ping_pong'
+    EIGHT_BALL = '8ball'
+    LANNYPARROT = 'lannyparrot'
 
     SUNNY = 'sunny'
     CRESCENT_MOON = 'crescent_moon'
