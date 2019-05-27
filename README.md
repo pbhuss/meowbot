@@ -26,13 +26,13 @@ Create a new Slack app at https://api.slack.com/app.
     * Add a Redirect URL for `https://[your-server]:[port]/authorize`
     * Under Scopes, add the scopes `chat:write:bot` and `bot`
 * Go to `Settings → Basic Information`
-    * You'll need the Client ID, Client Secret, and Verification Token for the
-    next step
+    * You'll need the Client ID, Client Secret, and Signing Secret for the next
+    step
 
 #### Configuration
 Update [config.yaml](instance/config.yaml)
-* Get `slack_verification_token`, `client_id` and `client_secret` from the
-  Slack Setup above
+* Get `signing_secret`, `client_id` and `client_secret` from the Slack Setup
+above
 * Sign up for the free APIs listed and paste in your API keys
 * Set your `default_zip_code`
     * This will be used for commands such as `weather` and `airquality` when no
@@ -88,7 +88,7 @@ docker-compose down
 
 ## Authors
 
-* **Peter Huss** - [pbhuss](https://github.com/pbhuss)
+* Peter Huss - [pbhuss](https://github.com/pbhuss)
 
 See also the list of
 [contributors](https://github.com/pbhuss/meowbot/contributors) who participated

@@ -10,7 +10,7 @@ from flask import render_template
 
 from meowbot.models import AccessToken, Cat
 from meowbot.util import (
-    requires_token,
+    verify_signature,
     get_queue,
     get_config,
     get_redis,
@@ -27,7 +27,7 @@ def index():
 
 
 @main.route('/meow', methods=['POST'])
-@requires_token
+@verify_signature
 def meow():
     data = request.get_json()
     meowbot.log.debug(data)

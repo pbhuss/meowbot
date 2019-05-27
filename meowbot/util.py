@@ -1,4 +1,6 @@
+import hmac
 import json
+import time
 from functools import wraps, lru_cache
 
 import redis
@@ -21,8 +23,8 @@ def get_config():
         return yaml.safe_load(fp)
 
 
-def get_verification_token():
-    return get_config()['slack_verification_token']
+def get_signing_secret():
+    return get_config()['signing_secret'].encode('utf-8')
 
 
 def get_cat_api_key():
@@ -82,11 +84,35 @@ def restore_default_tv_channel():
     return url
 
 
-def requires_token(f):
+def verify_signature(f):
     @wraps(f)
     def decorated(*args, **kwargs):
-        if request.get_json()['token'] != get_verification_token():
-            return Response('Invalid token.', status=400)
+        if (
+            'X-Slack-Request-Timestamp' not in request.headers
+            or 'X-Slack-Signature' not in request.headers
+        ):
+            meowbot.log.warning('Request missing expected headers!')
+            return Response(status=400)
+
+        if abs(
+            time.time() - request.headers.get(
+                'X-Slack-Request-Timestamp', type=int)
+        ) > 60 * 5:
+            # The request timestamp is more than five minutes from local time.
+            # It could be a replay attack, so let's ignore it.
+            meowbot.log.warning('Request is possible replay attack!')
+            return Response(status=400)
+
+        msg = b':'.join((
+            b'v0',
+            request.headers.get('X-Slack-Request-Timestamp', as_bytes=True),
+            request.data
+        ))
+        digest = hmac.new(get_signing_secret(), msg, 'sha256').hexdigest()
+        signature = request.headers['X-Slack-Signature']
+        if not hmac.compare_digest(f'v0={digest}', signature):
+            meowbot.log.warning('Request failed signature check!')
+            return Response(status=400)
         return f(*args, **kwargs)
     return decorated
 
