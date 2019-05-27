@@ -83,10 +83,7 @@ class CommandList(object):
         if cls.has_command(alias):
             raise ValueError(f'Command {alias} already registered')
         cls.invisible_commands[alias] = cls.get_command(name)
-        cls.help[alias] = '`{}` → {}'.format(
-            alias,
-            cls.get_help(name)
-        )
+        cls.help[alias] = f'`{alias}` → {cls.get_help(name)}'
 
 
 @CommandList.register(
@@ -185,7 +182,7 @@ def cat(context, *args):
             name=name.lower()
         ).count()
         if num_photos == 0:
-            return {'text': 'No cats named {} registered'.format(name)}
+            return {'text': f'No cats named {name} registered'}
         if len(args) == 2:
             number = args[1]
             if not number.isnumeric():
@@ -242,7 +239,7 @@ def addcat(context, *args):
     url = url[1:-1]
     if not validators.url(url):
         return {
-            'text': '`{}` is not a valid URL'.format(url),
+            'text': f'`{url}` is not a valid URL',
             'thread_ts': context['event']['ts']
         }
     row = Cat(name=name.lower(), url=url)
@@ -266,7 +263,7 @@ def addcat(context, *args):
 def listcats(context, *args):
     rows = meowbot.db.session.query(Cat.name).distinct()
     names = ', '.join((row.name for row in rows))
-    return {'text': 'Cats in database: {}'.format(names)}
+    return {'text': f'Cats in database: {names}'}
 
 
 @CommandList.register(
@@ -533,7 +530,7 @@ def weather(context, *args):
     data = redis.get(key)
     location = get_location(query)
     if location is None:
-        return {'text': 'Location `{}` not found'.format(query)}
+        return {'text': f'Location `{query}` not found'}
 
     icon_map = {
         'clear-day': Emoji.SUNNY,
@@ -579,7 +576,7 @@ def weather(context, *args):
     result = json.loads(data.decode('utf-8'))
 
     return {
-        'text': '*Forecast for {}*'.format(location['display_name']),
+        'text': f'*Forecast for {location["display_name"]}*',
         'attachments': [
             {
                 'title': 'Current Weather',
@@ -638,7 +635,7 @@ def airquality(context, *args):
 
     redis = get_redis()
 
-    key = 'aqi:{}'.format(zip_code)
+    key = f'aqi:{zip_code}'
     data = redis.get(key)
     if data is None:
         airnow_api_key = get_airnow_api_key()
@@ -782,7 +779,7 @@ def adoptcat(context, *args):
         zip_code, = args
         if not zip_code.isnumeric():
             return {
-                'text': 'Zip code must be a number. Got `{}`'.format(zip_code)
+                'text': f'Zip code must be a number. Got `{zip_code}`'
             }
     elif len(args) > 1:
         return {
@@ -923,9 +920,7 @@ def setchannel(context, *args):
             }
         redis.set('tvchannel', channels[channel]['url'])
         return {
-            'text': 'Changing channel to {}!'.format(
-                channels[channel]['name']
-            ),
+            'text': f'Changing channel to {channels[channel]["name"]}!',
         }
     elif len(args) == 2:
         channel_type, value = args
@@ -943,9 +938,9 @@ def setchannel(context, *args):
             }
         elif channel_type == 'youtube':
             url = (
-                'https://www.youtube.com/embed/{video_id}?'
-                'autoplay=1&loop=1&playlist={video_id}'
-            ).format(video_id=value)
+                f'https://www.youtube.com/embed/{value}?'
+                f'autoplay=1&loop=1&playlist={value}'
+            )
             redis.set('tvchannel', url)
             return {
                 'text': f'Changing channel to {Emoji.YOUTUBE} {value}!',

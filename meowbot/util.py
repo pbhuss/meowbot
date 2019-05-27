@@ -92,7 +92,7 @@ def requires_token(f):
 
 
 def quote_user_id(user_id):
-    return '<@{}>'.format(user_id)
+    return f'<@{user_id}>'
 
 
 def get_bot_access_token(team_id):
