@@ -15,8 +15,7 @@ from meowbot.util import (
     get_config,
     get_redis,
     restore_default_tv_channel)
-from meowbot.worker import process_request
-
+from meowbot.worker import process_request, process_interactive
 
 main = Blueprint('main', __name__)
 
@@ -39,6 +38,17 @@ def meow():
         )
 
     get_queue().enqueue(process_request, data=data)
+
+    return Response(status=200)
+
+
+@main.route('/interactive', methods=['POST'])
+@verify_signature
+def interactive():
+    data = request.values.get('payload', type=json.loads)
+    meowbot.log.debug(data)
+
+    get_queue().enqueue(process_interactive, data=data)
 
     return Response(status=200)
 

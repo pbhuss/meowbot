@@ -106,7 +106,7 @@ def verify_signature(f):
         msg = b':'.join((
             b'v0',
             request.headers.get('X-Slack-Request-Timestamp', as_bytes=True),
-            request.data
+            request.get_data()
         ))
         digest = hmac.new(get_signing_secret(), msg, 'sha256').hexdigest()
         signature = request.headers['X-Slack-Signature']
