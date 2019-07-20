@@ -181,3 +181,24 @@ class Lanny(SimpleResponseCommand):
             'icon_emoji': f'{Emoji.LANNYPARROT}',
             'username': 'Lannybot'
         }
+
+class Sing(SimpleResponseCommand):
+
+    name = 'sing'
+    help = '`sing`: get meowbot to sing you a song'
+
+    def get_message_args(self, context: CommandContext):
+        return {
+                'text': f'https://www.youtube.com/watch?v=4-L6rEm0rnY'
+        }
+
+class Movie(SimpleResponseCommand):
+    name = 'movie'
+
+    name = 'movie'
+    help= '`movie`: get meowbot to show you a movie trailer'
+
+    def get_message_args(self, context: CommandContext):
+        return {
+                'text': f'https://www.youtube.com/watch?v=FtSd844cI7U'
+        }
