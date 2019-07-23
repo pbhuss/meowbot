@@ -189,16 +189,15 @@ class Sing(SimpleResponseCommand):
 
     def get_message_args(self, context: CommandContext):
         return {
-                'text': f'https://www.youtube.com/watch?v=4-L6rEm0rnY'
+            'text': 'https://www.youtube.com/watch?v=4-L6rEm0rnY'
         }
 
 class Movie(SimpleResponseCommand):
+    
     name = 'movie'
-
-    name = 'movie'
-    help= '`movie`: get meowbot to show you a movie trailer'
+    help = '`movie`: get meowbot to show you a movie trailer'
 
     def get_message_args(self, context: CommandContext):
         return {
-                'text': f'https://www.youtube.com/watch?v=FtSd844cI7U'
+            'text': 'https://www.youtube.com/watch?v=FtSd844cI7U'
         }
