@@ -73,5 +73,5 @@ class AdoptCat(SimpleResponseCommand):
                 {'text': pet['basic_info'], 'image_url': pet['photo']}
                 for pet in pets
             ],
-            'thread_ts': context['event']['ts']
+            'thread_ts': context.event.ts
         }

@@ -26,7 +26,7 @@ DEFAULT_UNITS = 'us'
 class Weather(SimpleResponseCommand, InteractiveCommand):
 
     name = 'weather'
-    help = '`weather [location]`: get weather forecast',
+    help = '`weather [location]`: get weather forecast'
     aliases = ['forecast']
 
     def get_message_args(self, context: CommandContext):

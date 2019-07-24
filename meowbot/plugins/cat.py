@@ -76,7 +76,7 @@ class AddCat(SimpleResponseCommand):
             return {
                 'text': 'Expected 2 args (name, url). '
                         f'Got {len(context.args)}',
-                'thread_ts': context['event']['ts']
+                'thread_ts': context.event.ts
             }
         name, url = context.args
         # TODO: figure out why URLs are wrapped in <>.
@@ -84,7 +84,7 @@ class AddCat(SimpleResponseCommand):
         if not validators.url(url):
             return {
                 'text': f'`{url}` is not a valid URL',
-                'thread_ts': context['event']['ts']
+                'thread_ts': context.event.ts
             }
         row = Cat(name=name.lower(), url=url)
         meowbot.db.session.add(row)
@@ -96,7 +96,7 @@ class AddCat(SimpleResponseCommand):
                     'image_url': url,
                 }
             ],
-            'thread_ts': context['event']['ts']
+            'thread_ts': context.event.ts
         }
 
 

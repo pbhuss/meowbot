@@ -102,7 +102,7 @@ class SetChannel(SimpleResponseCommand):
         return {
             'text': 'Must provide a channel.\n\n'
                     f'Available channels: {available_channels}',
-            'thread_ts': context['event']['ts']
+            'thread_ts': context.event.ts
         }
 
 
