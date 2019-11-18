@@ -4,15 +4,15 @@
     "name": ":catkool: Kitten Academy Live Stream"
   },
   "jellyfish": {
-    "url": "https://www.youtube.com/embed/_KpiCoLf2Lw?autoplay=1",
+    "url": "https://www.youtube.com/embed/BcGey64plYA?autoplay=1",
     "name": ":jellyfish: Monterey Bay Aquarium Jelly Cam"
   },
   "otter1": {
-    "url": "https://www.youtube.com/embed/OD7RWseb7p4?autoplay=1",
+    "url": "https://www.youtube.com/embed/db-zbXkjTno?autoplay=1",
     "name": ":otter: Seattle Aquarium Sea Otters - cam 1"
   },
   "otter2": {
-    "url": "https://www.youtube.com/embed/U5hz_BW3U0g?autoplay=1",
+    "url": "https://www.youtube.com/embed/Q1fp5nEacbg?autoplay=1",
     "name": ":otter: Seattle Aquarium Sea Otters - cam 2"
   },
   "nasa1": {
@@ -22,6 +22,10 @@
   "nasa2": {
     "url": "https://www.youtube.com/embed/live_stream?channel=UCLA_DiR1FfKNvjuUpBHmylQ&autoplay=1",
     "name": ":nasa: NASA Live - ISS cam 2"
+  },
+  "nasa3": {
+    "url": "https://www.youtube.com/embed/live_stream?channel=UCryGec9PdUCLjpJW2mgCuLw&autoplay=1",
+    "name": ":nasa: NASA Live - Mars 2020 Rover"
   },
   "giraffe": {
     "url": "https://www.youtube.com/embed/TJ25MrRoH88?autoplay=1",

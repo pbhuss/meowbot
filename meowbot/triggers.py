@@ -1,42 +1,18 @@
 import inspect
 from abc import ABCMeta, abstractmethod
-from typing import MutableMapping
 
+from meowbot.conditions import Never, IsCommand
 from meowbot.context import CommandContext, InteractivePayload, SlackAction
 
 
-class CommandRegistry(MutableMapping):
-
-    def __init__(self):
-        self._commands = {}
-
-    def __getitem__(self, item):
-        return self._commands[item]
-
-    def __setitem__(self, key, value):
-        if key in self:
-            raise ValueError(f'Command {key} already registered')
-        self._commands[key] = value
-
-    def __delitem__(self, key):
-        del self._commands[key]
-
-    def __iter__(self):
-        return iter(self._commands)
-
-    def __len__(self):
-        return len(self._commands)
+trigger_registry = []
 
 
-command_registry = CommandRegistry()
-
-
-class BaseCommand(metaclass=ABCMeta):
-
+class BaseTrigger(metaclass=ABCMeta):
     @property
     @classmethod
     @abstractmethod
-    def name(cls):
+    def condition(cls):
         return NotImplemented
 
     @classmethod
@@ -44,23 +20,24 @@ class BaseCommand(metaclass=ABCMeta):
         super().__init_subclass__(**kwargs)
 
         if not abstract:
-            command_registry[cls.name] = cls
+            trigger_registry.append(cls)
 
-            for alias in getattr(cls, 'aliases', []):
-                command_registry[alias] = cls
+    def activated(self, context):
+        return self.condition.evaluate(context)
 
     @abstractmethod
     def run(self, context: CommandContext):
         pass
 
+
+class BaseCommand(BaseTrigger, abstract=True, metaclass=ABCMeta):
     def get_help(self, context: CommandContext):
-        if hasattr(self, 'help'):
+        if hasattr(self, "help"):
             return self.help
-        return f'`{self.name}`: no help available'
+        return "no help available"
 
 
 class SimpleResponseCommand(BaseCommand, abstract=True, metaclass=ABCMeta):
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.responses = []
@@ -77,10 +54,10 @@ class SimpleResponseCommand(BaseCommand, abstract=True, metaclass=ABCMeta):
         )
 
         for arguments in arg_gen:
-            arguments['channel'] = context.event.channel
+            arguments["channel"] = context.event.channel
             # Respond to thread if meowbot was mentioned in one
-            if hasattr(context.event, 'thread_ts'):
-                arguments['thread_ts'] = context.event.thread_ts
+            if hasattr(context.event, "thread_ts"):
+                arguments["thread_ts"] = context.event.thread_ts
 
             self.responses.append(context.api.chat_post_message(arguments))
 
@@ -93,6 +70,10 @@ class SimpleResponseCommand(BaseCommand, abstract=True, metaclass=ABCMeta):
 
 
 class InteractiveCommand(BaseCommand, abstract=True, metaclass=ABCMeta):
+    def is_action_relevant(self, action):
+        if isinstance(self.condition, IsCommand):
+            return action.command in self.condition._aliases
+        return False
 
     @abstractmethod
     def interact(self, payload: InteractivePayload, action: SlackAction):
@@ -101,14 +82,14 @@ class InteractiveCommand(BaseCommand, abstract=True, metaclass=ABCMeta):
 
 class MissingCommand(SimpleResponseCommand):
 
-    name = '__missing__'
+    condition = Never()
     private = True
 
     def get_message_args(self, context: CommandContext):
         return {
-            'text': f'Meow? (I don\'t understand `{context.command}`). '
-                    'Try `@meowbot help`.'
+            "text": f"Meow? (I don't understand `{context.command}`). "
+            "Try `@meowbot help`."
         }
 
 
-from meowbot.plugins import *   # noqa
+from meowbot.plugins import *  # noqa

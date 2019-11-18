@@ -1,67 +1,60 @@
 import random
 
-from meowbot.commands import SimpleResponseCommand
+from meowbot.triggers import SimpleResponseCommand
+from meowbot.conditions import IsCommand
 from meowbot.constants import Emoji
 from meowbot.context import CommandContext
 
 
 class Shrug(SimpleResponseCommand):
 
-    name = 'shrug'
-    help = '`shrug`: shrug'
+    condition = IsCommand(["shrug"])
+    help = "`shrug`: shrug"
     private = True
 
     def get_message_args(self, context: CommandContext):
-        return {
-            'text': rf'¯\_{Emoji.CAT}_/¯'
-        }
+        return {"text": rf"¯\_{Emoji.CAT}_/¯"}
 
 
 class Meow(SimpleResponseCommand):
 
-    name = 'meow'
-    help = '`meow`: meow!'
+    condition = IsCommand(["meow"])
+    help = "`meow`: meow!"
 
     def get_message_args(self, context: CommandContext):
-        return {
-            'text': f'Meow! {Emoji.CATKOOL}'
-        }
+        return {"text": f"Meow! {Emoji.CATKOOL}"}
 
 
 class Poop(SimpleResponseCommand):
 
-    name = 'poop'
-    help = '`poop`: meowbot poops'
+    condition = IsCommand(["poop"])
+    help = "`poop`: meowbot poops"
     private = True
 
     def get_message_args(self, context: CommandContext):
-        return {
-            'icon_emoji': f'{Emoji.SMIRK_CAT}',
-            'text': f'{Emoji.POOP}'
-        }
+        return {"icon_emoji": f"{Emoji.SMIRK_CAT}", "text": f"{Emoji.POOP}"}
 
 
 class No(SimpleResponseCommand):
 
-    name = 'no'
+    condition = IsCommand(["no", "bad", "stop"])
     private = True
-    help = '`no`: bad kitty!'
-    aliases = ['bad', 'stop']
+    help = "`no`: bad kitty!"
 
     def get_message_args(self, context: CommandContext):
         options = [
-            'https://media.giphy.com/media/mYbsoApPfp0cg/giphy.gif',
-            'https://media.giphy.com/media/dXO1Cy51pMrGU/giphy.gif',
-            'https://media.giphy.com/media/ZXWZ6q1HYYpR6/giphy.gif',
-            'https://media.giphy.com/media/kpMRmXUtsOeIg/giphy.gif',
-            'https://media.giphy.com/media/xg0nPTCKIPJRe/giphy.gif',
+            "https://media.giphy.com/media/mYbsoApPfp0cg/giphy.gif",
+            "https://media.giphy.com/media/dXO1Cy51pMrGU/giphy.gif",
+            "https://media.giphy.com/media/ZXWZ6q1HYYpR6/giphy.gif",
+            "https://media.giphy.com/media/kpMRmXUtsOeIg/giphy.gif",
+            "https://media.giphy.com/media/xg0nPTCKIPJRe/giphy.gif",
         ]
         return {
-            'blocks': [
+            "blocks": [
                 {
-                    'type': 'image',
-                    'image_url': random.choice(options),
-                    'alt_text': 'dealwithit',
+                    "type": "image",
+                    "image_url": random.choice(options),
+                    "alt_text": "dealwithit",
                 }
             ]
         }
@@ -69,30 +62,27 @@ class No(SimpleResponseCommand):
 
 class Hmm(SimpleResponseCommand):
 
-    name = 'hmm'
-    help = '`hmm`: thinking...',
-    aliases = ['think', 'thinking']
+    condition = IsCommand(["hmm", "think", "thinking"])
+    help = ("`hmm`: thinking...",)
 
     def get_message_args(self, context: CommandContext):
-        return {
-            'text': str(random.choice(list(Emoji.thinking())))
-        }
+        return {"text": str(random.choice(list(Emoji.thinking())))}
 
 
 class Nyan(SimpleResponseCommand):
 
-    name = 'nyan'
-    help = '`nyan`: nyan'
+    condition = IsCommand(["nyan"])
+    help = "`nyan`: nyan"
 
     def get_message_args(self, context: CommandContext):
         return {
-            'blocks': [
+            "blocks": [
                 {
-                    'type': 'image',
-                    'image_url': (
-                        'https://media.giphy.com/media/sIIhZliB2McAo/giphy.gif'
+                    "type": "image",
+                    "image_url": (
+                        "https://media.giphy.com/media/sIIhZliB2McAo/giphy.gif"
                     ),
-                    'alt_text': 'nyan cat',
+                    "alt_text": "nyan cat",
                 }
             ]
         }
@@ -100,19 +90,19 @@ class Nyan(SimpleResponseCommand):
 
 class High5(SimpleResponseCommand):
 
-    name = 'high5'
-    help = '`high5`: give meowbot a high five',
-    aliases = ['highfive']
+    condition = IsCommand(["high5", "highfive", "hi5"])
+    help = ("`high5`: give meowbot a high five",)
+    aliases = ["highfive"]
 
     def get_message_args(self, context: CommandContext):
         return {
-            'blocks': [
+            "blocks": [
                 {
-                    'type': 'image',
-                    'image_url': (
-                        'https://media.giphy.com/media/'
-                        '10ZEx0FoCU2XVm/giphy.gif'),
-                    'alt_text': 'high five',
+                    "type": "image",
+                    "image_url": (
+                        "https://media.giphy.com/media/10ZEx0FoCU2XVm/giphy.gif"
+                    ),
+                    "alt_text": "high five",
                 }
             ]
         }
@@ -120,22 +110,22 @@ class High5(SimpleResponseCommand):
 
 class Catnip(SimpleResponseCommand):
 
-    name = 'catnip'
-    help = '`catnip`: give meowbot some catnip'
+    condition = IsCommand(["catnip"])
+    help = "`catnip`: give meowbot some catnip"
 
     def get_message_args(self, context: CommandContext):
         return {
-            'blocks': [
+            "blocks": [
                 {
-                    'type': 'image',
-                    'title': {
-                        'type': 'plain_text',
-                        'text': f'Oh no! You gave meowbot catnip {Emoji.HERB}',
+                    "type": "image",
+                    "title": {
+                        "type": "plain_text",
+                        "text": f"Oh no! You gave meowbot catnip {Emoji.HERB}",
                     },
-                    'image_url': (
-                        'https://media.giphy.com/media/DX6y0ENWjEGPe/giphy.gif'
+                    "image_url": (
+                        "https://media.giphy.com/media/DX6y0ENWjEGPe/giphy.gif"
                     ),
-                    'alt_text': 'catnip',
+                    "alt_text": "catnip",
                 }
             ]
         }
@@ -143,41 +133,29 @@ class Catnip(SimpleResponseCommand):
 
 class Dog(SimpleResponseCommand):
 
-    name = 'dog'
+    condition = IsCommand(["dog"])
     private = True
 
     def get_message_args(self, context: CommandContext):
-        return {
-            'text': 'no',
-            'icon_emoji': f'{Emoji.MONKACAT}'
-        }
+        return {"text": "no", "icon_emoji": f"{Emoji.MONKACAT}"}
 
 
 class Lanny(SimpleResponseCommand):
 
-    name = 'lanny'
-    help = '`lanny`: LANNY! LANNY!'
+    condition = IsCommand(["lanny"])
+    help = "`lanny`: LANNY! LANNY!"
     private = True
 
     def get_message_args(self, context: CommandContext):
-        text = '\n'.join(
+        text = "\n".join(
             (
-                ''.join(
-                    (
-                        str(Emoji[f'LANNY_{r}_{c}'])
-                        for c in range(5)
-                    )
-                )
+                "".join((str(Emoji[f"LANNY_{r}_{c}"]) for c in range(5)))
                 for r in range(5)
             )
         )
 
         return {
-            'attachments': [
-                {
-                    'text': text
-                }
-            ],
-            'icon_emoji': f'{Emoji.LANNYPARROT}',
-            'username': 'Lannybot'
+            "attachments": [{"text": text}],
+            "icon_emoji": f"{Emoji.LANNYPARROT}",
+            "username": "Lannybot",
         }

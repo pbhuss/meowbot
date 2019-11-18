@@ -1,9 +1,11 @@
+var channelId;
+
 function refreshTv() {
     $.get('/tv/channel').done(
-        function(channel) {
-            let tvFrame = $('#tvframe');
-            if (tvFrame.attr('src') !== channel) {
-                tvFrame.attr('src', channel);
+        function(data) {
+            if (channelId !== data.id) {
+                channelId = data.id;
+                $('#tvframe').attr('src', data.channel);
             }
         }
     )
