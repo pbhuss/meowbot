@@ -1,29 +1,22 @@
-from meowbot.commands import command_registry, MissingCommand
+from meowbot.triggers import trigger_registry, InteractiveCommand
 from meowbot.context import CommandContext, InteractivePayload
-from meowbot.util import (
-    with_app_context
-)
+from meowbot.util import with_app_context
 
 
 @with_app_context
 def process_request(data):
     context = CommandContext(data)
 
-    # Ignore messages from bots
-    if getattr(context.event, 'subtype', None) in (
-        'bot_message',
-        'message_changed',
-        'message_deleted'
-    ):
-        return
+    activated_triggers = []
+    for trigger_cls in trigger_registry:
+        trigger = trigger_cls()
+        if trigger.activated(context):
+            activated_triggers.append(trigger)
 
-    if context.command is None:
-        return
+    for trigger in sorted(activated_triggers, key=lambda t: getattr(t, "priority", 0)):
+        trigger.run(context)
 
-    command_obj = command_registry.get(context.command, MissingCommand)()
-    command_obj.run(context)
-
-    return command_obj
+    return activated_triggers
 
 
 @with_app_context
@@ -31,8 +24,10 @@ def process_interactive(data):
     payload = InteractivePayload(data)
 
     for action in payload.actions:
-        if action.command in command_registry:
-            command_obj = command_registry[action.command]()
-            command_obj.interact(payload, action)
+        for trigger_cls in trigger_registry:
+            if issubclass(trigger_cls, InteractiveCommand):
+                trigger = trigger_cls()
+                if trigger.is_action_relevant(action):
+                    trigger.interact(payload, action)
 
     return

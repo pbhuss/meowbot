@@ -1,28 +1,23 @@
 from flask import url_for
 
-from meowbot.commands import SimpleResponseCommand
+from meowbot.triggers import SimpleResponseCommand
+from meowbot.conditions import IsCommand
 from meowbot.context import CommandContext
 
 
 class Homepage(SimpleResponseCommand):
 
-    name = 'homepage'
-    help = '`homepage`: link to Meowbot homepage'
-    aliases = ['home']
+    condition = IsCommand(["homepage", "home"])
+    help = "`homepage`: link to Meowbot homepage"
 
     def get_message_args(self, context: CommandContext):
-        return {
-            'text': url_for('main.index', _external=True)
-        }
+        return {"text": url_for("main.index", _external=True)}
 
 
 class GitHub(SimpleResponseCommand):
 
-    name = 'github'
-    help = '`github`: GitHub page for Meowbot'
-    aliases = ['git', 'source']
+    condition = IsCommand(["github", "git", "source"])
+    help = "`github`: GitHub page for Meowbot"
 
     def get_message_args(self, context: CommandContext):
-        return {
-            'text': 'https://github.com/pbhuss/meowbot'
-        }
+        return {"text": "https://github.com/pbhuss/meowbot"}

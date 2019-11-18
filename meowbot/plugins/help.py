@@ -1,48 +1,52 @@
 from flask import url_for
 
 import meowbot
-from meowbot.commands import SimpleResponseCommand, command_registry
+from meowbot.triggers import SimpleResponseCommand, trigger_registry, BaseCommand
+from meowbot.conditions import IsCommand
 from meowbot.context import CommandContext
 
 
 class Help(SimpleResponseCommand):
 
-    name = 'help'
-    help = '`help`: shows all commands, or help for a particular command'
+    condition = IsCommand(["help"])
+    help = "`help`: shows all commands, or help for a particular command"
 
     def get_message_args(self, context: CommandContext):
         if context.args:
             name = context.args[0].lower()
-            if name in command_registry:
-                text = command_registry[name]().get_help(context)
+            for trigger in trigger_registry:
+                if (
+                    issubclass(trigger, BaseCommand)
+                    and not getattr(trigger, "private", False)
+                    and (name in trigger.condition._aliases)
+                ):
+                    text = trigger().get_help(context)
+                    return {"text": text}
             else:
-                text = f'`{name}` is not a valid command'
-            return {
-                'text': text
-            }
+                text = f"`{name}` is not a valid command"
+                return {"text": text}
+
         else:
-            commands = sorted((
-                name
-                for name, command in command_registry.items()
-                if name == command.name
-                and not getattr(command, 'private', False)
-            ))
+            commands = {
+                trigger.condition._name: trigger
+                for trigger in trigger_registry
+                if issubclass(trigger, BaseCommand)
+                and not getattr(trigger, "private", False)
+            }
+
             attachment = {
-                'pretext': 'Available commands are:',
-                'fallback': ', '.join(commands),
-                'fields': [
-                    {'value': command_registry[name]().get_help(context)}
-                    for name in commands
+                "pretext": "Available commands are:",
+                "fallback": ", ".join(sorted(commands)),
+                "fields": [
+                    {"value": commands[name]().get_help(context)}
+                    for name in sorted(commands)
                 ],
-                'footer': '<{}|meowbot {}> | For more help, join '
-                          '#meowbot_control'.format(
-                    url_for('main.index', _external=True),
-                    meowbot.__version__
+                "footer": "<{}|meowbot {}> | For more help, join "
+                "#meowbot_control".format(
+                    url_for("main.index", _external=True), meowbot.__version__
                 ),
-                'footer_icon': url_for(
-                    'static', filename='meowbot_thumb.jpg', _external=True)
+                "footer_icon": url_for(
+                    "static", filename="meowbot_thumb.jpg", _external=True
+                ),
             }
-            return {
-                'attachments': [attachment],
-                'thread_ts': context.event.ts
-            }
+            return {"attachments": [attachment], "thread_ts": context.event.ts}
