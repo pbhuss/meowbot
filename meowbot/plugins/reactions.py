@@ -64,6 +64,8 @@ class MeowbotMentioned(Condition):
         self._suffix = suffix
 
     def evaluate(self, context: CommandContext):
+        if context.event.text is None:
+            return False
         lower_text = context.event.text.lower()
         return (
             f"meowbot{self._suffix}" in lower_text

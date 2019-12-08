@@ -79,6 +79,10 @@ class SlackEvent:
         return self._event.get("channel_type")
 
     @property
+    def user(self):
+        return self._event.get("user")
+
+    @property
     def text(self):
         if getattr(self, "subtype", None) == "message_changed":
             return self.message["text"]

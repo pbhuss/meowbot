@@ -75,4 +75,6 @@ class RegexMatch(Condition):
         self._regex = re.compile(pattern, flags=flags)
 
     def evaluate(self, context: CommandContext):
+        if context.event.text is None:
+            return False
         return self._regex.search(context.event.text)
