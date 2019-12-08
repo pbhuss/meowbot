@@ -34,6 +34,7 @@ class Emoji(Enum):
     YUBIKEY = "yubikey"
     MEOW_SHOCKED = "meow_shocked"
     MEOWBLUSH = "meowblush"
+    BLANK = "blank"
 
     ONE = "one"
     TWO = "two"

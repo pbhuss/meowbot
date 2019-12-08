@@ -7,6 +7,7 @@ __all__ = [
     "catfact",
     "concerts",
     "debug",
+    "emojify",
     "help",
     "lacroix",
     "love",
