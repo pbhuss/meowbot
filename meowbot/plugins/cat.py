@@ -42,22 +42,38 @@ class CatCommand(SimpleResponseCommand):
                 .offset(offset)
                 .one()
             )
-            return {
-                "blocks": [{"type": "image", "image_url": row.url, "alt_text": name}]
-            }
+            self.image_url = row.url
+            self.alt_text = name
+        else:
+            self.image_url = requests.head(
+                "https://api.thecatapi.com/v1/images/search?"
+                "format=src&mime_types=image/gif",
+                headers={"x-api-key": get_cat_api_key()},
+            ).headers["Location"]
+            self.alt_text = "cat gif"
         return {
             "blocks": [
                 {
                     "type": "image",
-                    "image_url": requests.head(
-                        "https://api.thecatapi.com/v1/images/search?"
-                        "format=src&mime_types=image/gif",
-                        headers={"x-api-key": get_cat_api_key()},
-                    ).headers["Location"],
-                    "alt_text": "cat gif",
+                    "image_url": self.image_url,
+                    "alt_text": self.alt_text,
                 }
             ]
         }
+
+    def post_run(self, context):
+        for response in self.responses:
+            if not response.ok:
+                context.api.chat_post_message(
+                    {
+                        "channel": context.event.channel,
+                        "text": (
+                            "Image could not be retrieved by Slack: "
+                            f"{self.image_url}"
+                        ),
+                    }
+                )
+        super().post_run(context)
 
 
 class AddCat(SimpleResponseCommand):

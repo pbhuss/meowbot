@@ -15,6 +15,18 @@ class Love(BaseCommand):
 
         user = context.args[0][2:-1]
         open_resp = context.api.im_open({"user": user})
+        if not open_resp.ok:
+            context.api.chat_post_ephemeral(
+                {
+                    "channel": context.event.channel,
+                    "user": context.event.user,
+                    "text": (
+                        f"User `{context.args[0]}` not found. "
+                        "Did you remember to use @?"
+                    ),
+                }
+            )
+            return
         channel = open_resp.channel["id"]
         extra = ""
         if len(context.args) > 1:
