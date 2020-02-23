@@ -19,12 +19,20 @@ Create a new Slack app at https://api.slack.com/app.
 * Go to `Features → Event Subscriptions`
     * Enable events for `https://[your-server]:[port]/meow`
     * Meowbot uses port 1338 by default
-    * Subscribe to the Bot Events named `app_mention` and `message.im`
-* Go to `Features → Bot Users`
+    * Subscribe to the following Bot Events:
+        * `message.channels` - A message was posted to a channel
+        * `message.groups` - A message was posted to a private channel
+        * `message.im` - A message was posted in a direct message channel
+        * `message.mpim` - A message was posted in a multiparty direct message
+        channel
+        * `reaction_added` - A member has added an emoji reaction to an item
+* Go to `Features → App Home`
     * Create a bot user with display name and username `meowbot`
 * Go to `Features → OAuth & Permissions`
     * Add a Redirect URL for `https://[your-server]:[port]/authorize`
-    * Under Scopes, add the scopes `chat:write:bot` and `bot`
+    * Under Scopes, add the scope `bot`
+        * Note: this scope is deprecated. Instructions for granular permissions
+        will be added soon
 * Go to `Settings → Basic Information`
     * You'll need the Client ID, Client Secret, and Signing Secret for the next
     step
@@ -70,8 +78,8 @@ docker-compose down
 
 ## Built With
 
-* [Flask](http://flask.pocoo.org/) - Python microframework
-* [Redis](https://redis.io/) - In-memory NoSQL database
+* [Flask](http://flask.pocoo.org/) - Python web app framework
+* [Redis](https://redis.io/) - In-memory data structure store
 * [RQ (Redis Queue)](https://python-rq.org/) - Python task queue library
 * [uWSGI](https://uwsgi-docs.readthedocs.io/en/latest/) - WSGI server
 * [NGINX](https://www.nginx.com/) - Reverse proxy
@@ -85,6 +93,7 @@ docker-compose down
 * [Dark Sky](https://darksky.net/dev) - Weather conditions & forecasts
 * [AirNow](https://docs.airnowapi.org/) - Air quality information
 * [Nominatim](https://nominatim.openstreetmap.org/) - OpenStreetMap geocoder
+* [Strava](https://developers.strava.com/) - Social fitness tracker
 
 ## Authors
 

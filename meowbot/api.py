@@ -24,6 +24,11 @@ class SlackMethod(Enum):
         requests.post,
         ["channel", "ts"],
     )
+    CHAT_DELETE = (
+        "https://slack.com/api/chat.delete",
+        requests.post,
+        ["channel", "ts"],
+    )
     IM_OPEN = ("https://slack.com/api/im.open", requests.post, ["user"])
     REACTIONS_ADD = (
         "https://slack.com/api/reactions.add",
@@ -90,6 +95,9 @@ class SlackApi:
 
     def chat_update(self, arguments: dict) -> SlackApiResponse:
         return self._make_request(SlackMethod.CHAT_UPDATE, arguments)
+
+    def chat_delete(self, arguments: dict) -> SlackApiResponse:
+        return self._make_request(SlackMethod.CHAT_DELETE, arguments)
 
     def im_open(self, arguments: dict) -> SlackApiResponse:
         return self._make_request(SlackMethod.IM_OPEN, arguments)

@@ -34,6 +34,11 @@ class Not(Condition):
         return not self._condition.evaluate(context)
 
 
+class Always(Condition):
+    def evaluate(self, context: CommandContext):
+        return True
+
+
 class Never(Condition):
     def evaluate(self, context: CommandContext):
         return False
@@ -52,6 +57,17 @@ class IsCommand(Condition):
         ):
             return False
         return context.command in self._aliases
+
+
+class IsReaction(Condition):
+    def __init__(self, reactions):
+        self._reactions = set(reactions)
+
+    def evaluate(self, context: CommandContext):
+        return (
+            context.event.type == "reaction_added"
+            and context.event.reaction in self._reactions
+        )
 
 
 class InChannel(Condition):

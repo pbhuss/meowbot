@@ -35,6 +35,7 @@ class Emoji(Enum):
     MEOW_SHOCKED = "meow_shocked"
     MEOWBLUSH = "meowblush"
     BLANK = "blank"
+    DUMPSTER_FIRE = "dumpster-fire"
 
     ONE = "one"
     TWO = "two"

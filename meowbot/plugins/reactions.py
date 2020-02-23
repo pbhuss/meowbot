@@ -69,6 +69,8 @@ class MeowbotMentioned(Condition):
         lower_text = context.event.text.lower()
         return (
             f"meowbot{self._suffix}" in lower_text
+            # TODO: add a canonical list of meowbot nicknames
+            or f"meowboi{self._suffix}" in lower_text
             or f"{quote_user_id(context.bot_user)}{self._suffix}" in context.event.text
         )
 
