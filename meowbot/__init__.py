@@ -9,7 +9,7 @@ from meowbot.util import auth_response, check_auth
 from meowbot.views import main
 
 
-__version__ = "2.3.1"
+__version__ = "2.3.2"
 
 
 def create_app(config_filename):
