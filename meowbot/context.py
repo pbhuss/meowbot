@@ -88,6 +88,12 @@ class SlackEvent:
             return self.message["text"]
         return self._event.get("text")
 
+    @property
+    def channel(self):
+        if self.type == "reaction_added":
+            return self.item.get("channel")
+        return self._event.get("channel")
+
 
 class InteractivePayload:
     def __init__(self, data):
