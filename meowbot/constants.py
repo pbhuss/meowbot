@@ -36,6 +36,7 @@ class Emoji(Enum):
     MEOWBLUSH = "meowblush"
     BLANK = "blank"
     DUMPSTER_FIRE = "dumpster-fire"
+    CLAP = "clap"
 
     ONE = "one"
     TWO = "two"

@@ -56,6 +56,8 @@ class IsCommand(Condition):
             "message_deleted",
         ):
             return False
+        if hasattr(context.event, "bot_id"):
+            return False
         return context.command in self._aliases
 
 

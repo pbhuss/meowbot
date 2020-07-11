@@ -31,6 +31,7 @@ class Help(SimpleResponseCommand):
                 trigger.condition._name: trigger
                 for trigger in trigger_registry
                 if issubclass(trigger, BaseCommand)
+                and isinstance(trigger.condition, IsCommand)
                 and not getattr(trigger, "private", False)
             }
 

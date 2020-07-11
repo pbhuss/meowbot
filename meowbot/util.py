@@ -5,6 +5,7 @@ from functools import wraps, lru_cache
 
 import redis
 import rq
+import rq_scheduler
 import yaml
 from flask import Response, request
 from geopy import Nominatim
@@ -81,6 +82,10 @@ def get_redis():
 
 def get_queue():
     return rq.Queue(connection=get_redis())
+
+
+def get_scheduler():
+    return rq_scheduler.Scheduler(connection=get_redis())
 
 
 def get_channels():

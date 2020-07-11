@@ -1,4 +1,4 @@
-SERVER_NAME = "something.com:1338"
+SERVER_NAME = "meowbot.pbhuss.dev"
 PREFERRED_URL_SCHEME = "https"
 TEMPLATES_AUTO_RELOAD = True
 SQLALCHEMY_DATABASE_URI = "sqlite:///../instance/meowbot.db"

@@ -34,5 +34,13 @@
   "osprey": {
     "url": "https://www.youtube.com/embed/7oqtyFRHok4?autoplay=1",
     "name": ":birb: Chesapeake Conservancy Osprey Cam"
+  },
+  "goats": {
+    "url": "https://www.youtube.com/embed/live_stream?channel=UCXp5e0_f7UJTjF7LGCLsNAg&autoplay=1",
+    "name": ":goat: Baby Goats"
+  },
+  "fish": {
+    "url": "https://www.youtube.com/embed/HYknTgcw2BM?autoplay=1",
+    "name": ":think_fish: Wrasse and Anthias Fish Cam"
   }
 }

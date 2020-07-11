@@ -13,7 +13,9 @@ def process_request(data):
         if trigger.activated(context):
             activated_triggers.append(trigger)
 
-    for trigger in sorted(activated_triggers, key=lambda t: getattr(t, "priority", 0)):
+    for trigger in sorted(
+        activated_triggers, key=lambda t: getattr(t, "priority", 0), reverse=True
+    ):
         trigger.run(context)
 
     return activated_triggers
