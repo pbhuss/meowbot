@@ -18,10 +18,11 @@ services:
     depends_on:
       - redis
     environment:
+      - MEOWBOT_HOST
       - VIRTUAL_PROTO=uwsgi
-      - VIRTUAL_HOST=meowbot.pbhuss.dev
+      - VIRTUAL_HOST=${MEOWBOT_HOST}
       - VIRTUAL_PORT=5000
-      - LETSENCRYPT_HOST=meowbot.pbhuss.dev
+      - LETSENCRYPT_HOST=${MEOWBOT_HOST}
     expose:
       - "5000"
     networks:
@@ -35,6 +36,8 @@ services:
       - ./:/usr/src/app
     depends_on:
       - redis
+    environment:
+      - MEOWBOT_HOST
 
   scheduler:
     image: meowbot-flask
@@ -43,6 +46,8 @@ services:
     - ./:/usr/src/app
     depends_on:
       - redis
+    environment:
+      - MEOWBOT_HOST
 
 networks:
   nginx-proxy:

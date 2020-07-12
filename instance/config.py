@@ -1,4 +1,6 @@
-SERVER_NAME = "meowbot.pbhuss.dev"
+import os
+
+SERVER_NAME = os.environ["MEOWBOT_HOST"]
 PREFERRED_URL_SCHEME = "https"
 TEMPLATES_AUTO_RELOAD = True
 SQLALCHEMY_DATABASE_URI = "sqlite:///../instance/meowbot.db"

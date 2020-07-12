@@ -9,6 +9,10 @@ Simple [Slack](https://slack.com) chatbot that responds to predefined commands.
 You must have [docker](https://docs.docker.com/install/) and
 [docker-compose](https://docs.docker.com/compose/install/) installed.
 
+Meowbot is configured to use Nginx as a reverse-proxy with uWSGI.
+* Instructions available at https://github.com/nginx-proxy/nginx-proxy
+* Meowbot expects that this runs on a Docker network named `nginx-proxy`
+
 You'll also need an existing Slack workspace to connect to meowbot. Create one
 [here](https://slack.com/create).
 
@@ -51,19 +55,12 @@ above
 * Set the `default_tv_channel`
     * Must be one of the keys in [channels.json](instance/channels.json)
 
-Update [config.py](instance/config.py)
-* Change the `SERVER_NAME` to your domain and port
-
-Update [nginx.conf](instance/nginx.conf)
-* Replace instances of `something.com` with your own domain
+Update [.env](.env)
+* Change `MEOWBOT_HOST` to the hostname you would like to use for meowbot.
 
 \[optional\] Update [channels.json](instance/channels.json)
 * Add your favorite live YouTube streams or other videos
 * Full-screen embedded players work best
-
-\[optional\] Update [docker-compose.yaml](docker-compose.yaml)
-* To host meowbot on a port other than 1338, change `1338` to your custom port
-under `services → nginx → ports`
 
 ### Docker
 
@@ -82,7 +79,6 @@ docker-compose down
 * [Redis](https://redis.io/) - In-memory data structure store
 * [RQ (Redis Queue)](https://python-rq.org/) - Python task queue library
 * [uWSGI](https://uwsgi-docs.readthedocs.io/en/latest/) - WSGI server
-* [NGINX](https://www.nginx.com/) - Reverse proxy
 * [Docker](https://docs.docker.com/) /
   [Docker Compose](https://docs.docker.com/compose/) - Multi-container platform
 
