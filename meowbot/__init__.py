@@ -2,6 +2,7 @@ import rq_dashboard
 
 from flask import Flask, request
 from flask.logging import create_logger
+from flask_talisman import Talisman
 
 from instance.config import REDIS_URL
 from meowbot.models import db
@@ -9,11 +10,12 @@ from meowbot.util import auth_response, check_auth
 from meowbot.views import main
 
 
-__version__ = "2.4.2"
+__version__ = "2.4.3"
 
 
 def create_app(config_filename):
     app = Flask(__name__, instance_relative_config=True)
+    Talisman(app)
     app.config.from_pyfile(config_filename)
 
     db.init_app(app)

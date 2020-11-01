@@ -1,6 +1,7 @@
 arrow<0.15,>=0.11   # pinned for ics
 Flask
 Flask-SQLAlchemy
+flask-talisman
 frogtips
 geopy
 ics
