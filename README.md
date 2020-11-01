@@ -21,8 +21,7 @@ You'll also need an existing Slack workspace to connect to meowbot. Create one
 #### Slack Setup
 Create a new Slack app at https://api.slack.com/app.
 * Go to `Features → Event Subscriptions`
-    * Enable events for `https://[your-server]:[port]/meow`
-    * Meowbot uses port 1338 by default
+    * Enable events for `https://$(MEOWBOT_HOST)/meow`
     * Subscribe to the following Bot Events:
         * `message.channels` - A message was posted to a channel
         * `message.groups` - A message was posted to a private channel
@@ -33,10 +32,10 @@ Create a new Slack app at https://api.slack.com/app.
 * Go to `Features → App Home`
     * Create a bot user with display name and username `meowbot`
 * Go to `Features → OAuth & Permissions`
-    * Add a Redirect URL for `https://[your-server]:[port]/authorize`
+    * Add a Redirect URL for `https://$(MEOWBOT_HOST)/authorize`
     * Under Scopes, add the scope `bot`
         * Note: this scope is deprecated. Instructions for granular permissions
-        will be added soon
+        will be added in the future
 * Go to `Settings → Basic Information`
     * You'll need the Client ID, Client Secret, and Signing Secret for the next
     step
