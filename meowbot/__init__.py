@@ -10,12 +10,18 @@ from meowbot.util import auth_response, check_auth
 from meowbot.views import main
 
 
-__version__ = "2.4.3"
+__version__ = "2.4.4"
 
 
 def create_app(config_filename):
     app = Flask(__name__, instance_relative_config=True)
-    Talisman(app)
+    csp = {
+        "default-src": "'self'",
+        "img-src": "*",
+        "script-src": "'self' https://code.jquery.com",
+        "frame-src": "*",
+    }
+    Talisman(app, content_security_policy=csp)
     app.config.from_pyfile(config_filename)
 
     db.init_app(app)
