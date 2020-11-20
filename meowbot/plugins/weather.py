@@ -202,7 +202,7 @@ class SetUnits(BaseCommand):
                 {
                     "channel": context.event.channel,
                     "user": context.event.user,
-                    "text": f"Expected a single argument (f/c)",
+                    "text": "Expected a single argument (f/c)",
                 }
             )
             return

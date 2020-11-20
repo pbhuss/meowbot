@@ -65,14 +65,14 @@ class SlackApi:
     def from_command_context(cls, context):
         bot_access_token = get_bot_access_token(context.team_id)
         if not bot_access_token:
-            raise RuntimeError(f"Missing bot_access_token")
+            raise RuntimeError("Missing bot_access_token")
         return cls(bot_access_token)
 
     @classmethod
     def from_interactive_payload(cls, payload):
         bot_access_token = get_bot_access_token(payload.team["id"])
         if not bot_access_token:
-            raise RuntimeError(f"Missing bot_access_token")
+            raise RuntimeError("Missing bot_access_token")
         return cls(bot_access_token)
 
     def _validate_arguments(self, method: SlackMethod, arguments: dict):
@@ -84,7 +84,11 @@ class SlackApi:
     def _make_request(self, method: SlackMethod, arguments: dict):
         self._validate_arguments(method, arguments)
         headers = {"Authorization": f"Bearer {self._bot_access_token}"}
-        response = method.http_method(method.url, headers=headers, json=arguments,)
+        response = method.http_method(
+            method.url,
+            headers=headers,
+            json=arguments,
+        )
         return SlackApiResponse(response)
 
     def chat_post_message(self, arguments: dict) -> SlackApiResponse:

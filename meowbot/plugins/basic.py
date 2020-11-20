@@ -148,10 +148,7 @@ class Lanny(SimpleResponseCommand):
 
     def get_message_args(self, context: CommandContext):
         text = "\n".join(
-            (
-                "".join((str(Emoji[f"LANNY_{r}_{c}"]) for c in range(5)))
-                for r in range(5)
-            )
+            "".join(str(Emoji[f"LANNY_{r}_{c}"]) for c in range(5)) for r in range(5)
         )
 
         return {

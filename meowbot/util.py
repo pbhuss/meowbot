@@ -20,7 +20,7 @@ YAML_CONF_PATH = "instance/config.yaml"
 
 @lru_cache(maxsize=1)
 def get_config():
-    with open(YAML_CONF_PATH, "r") as fp:
+    with open(YAML_CONF_PATH) as fp:
         return yaml.safe_load(fp)
 
 
@@ -89,7 +89,7 @@ def get_scheduler():
 
 
 def get_channels():
-    with open("instance/channels.json", "r", encoding="utf-8") as fp:
+    with open("instance/channels.json", encoding="utf-8") as fp:
         return json.load(fp)
 
 
@@ -146,7 +146,13 @@ def quote_user_id(user_id):
 
 
 def get_bot_access_token(team_id):
-    row = AccessToken.query.filter_by(team_id=team_id,).limit(1).one_or_none()
+    row = (
+        AccessToken.query.filter_by(
+            team_id=team_id,
+        )
+        .limit(1)
+        .one_or_none()
+    )
     if row:
         return row.bot_access_token
     return None

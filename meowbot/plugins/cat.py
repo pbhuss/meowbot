@@ -111,7 +111,7 @@ class ListCats(SimpleResponseCommand):
 
     def get_message_args(self, context: CommandContext):
         rows = meowbot.db.session.query(Cat.name).distinct()
-        names = ", ".join((row.name for row in rows))
+        names = ", ".join(row.name for row in rows)
         return {"text": f"Cats in database: {names}"}
 
 

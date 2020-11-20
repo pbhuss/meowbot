@@ -34,7 +34,7 @@ class Poke(SimpleResponseCommand):
             return {
                 "icon_emoji": f"{Emoji.SHOOKCAT}",
                 "text": (
-                    f"You have poked meowbot 1 time!\n\n"
+                    "You have poked meowbot 1 time!\n\n"
                     "You're the first to poke meowbot!"
                 ),
             }
