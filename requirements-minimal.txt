@@ -1,4 +1,4 @@
-arrow<0.15,>=0.11   # pinned for ics
+arrow>=0.11,<0.16   # pinned for ics
 Flask
 Flask-SQLAlchemy
 flask-talisman
