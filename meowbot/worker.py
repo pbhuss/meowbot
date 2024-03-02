@@ -1,5 +1,7 @@
-from meowbot.triggers import trigger_registry, InteractiveCommand
-from meowbot.context import CommandContext, InteractivePayload
+from meowbot.context import CommandContext
+from meowbot.context import InteractivePayload
+from meowbot.triggers import InteractiveCommand
+from meowbot.triggers import trigger_registry
 from meowbot.util import with_app_context
 
 

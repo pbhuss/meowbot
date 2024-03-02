@@ -1,17 +1,14 @@
 import random
 
-from meowbot.triggers import SimpleResponseCommand
 from meowbot.conditions import IsCommand
-from meowbot.constants import (
-    shakespeare_insult_start,
-    shakespeare_insult_middle,
-    shakespeare_insult_end,
-)
+from meowbot.constants import shakespeare_insult_end
+from meowbot.constants import shakespeare_insult_middle
+from meowbot.constants import shakespeare_insult_start
 from meowbot.context import CommandContext
+from meowbot.triggers import SimpleResponseCommand
 
 
 class Shakespeare(SimpleResponseCommand):
-
     condition = IsCommand(["shakespeare"])
     help = "`shakespeare`: generates a Shakespearean insult"
 

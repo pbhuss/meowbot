@@ -2,15 +2,15 @@ import time
 
 import arrow
 
-from meowbot.triggers import SimpleResponseCommand
 from meowbot.conditions import IsCommand
 from meowbot.constants import Emoji
 from meowbot.context import CommandContext
-from meowbot.util import get_redis, quote_user_id
+from meowbot.triggers import SimpleResponseCommand
+from meowbot.util import get_redis
+from meowbot.util import quote_user_id
 
 
 class Poke(SimpleResponseCommand):
-
     condition = IsCommand(["poke"])
     help = "`poke`: poke meowbot"
 

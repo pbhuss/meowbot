@@ -1,9 +1,12 @@
 import inspect
-from abc import ABCMeta, abstractmethod
+from abc import ABCMeta
+from abc import abstractmethod
 
-from meowbot.conditions import Never, IsCommand
-from meowbot.context import CommandContext, InteractivePayload, SlackAction
-
+from meowbot.conditions import IsCommand
+from meowbot.conditions import Never
+from meowbot.context import CommandContext
+from meowbot.context import InteractivePayload
+from meowbot.context import SlackAction
 
 trigger_registry = []
 
@@ -81,7 +84,6 @@ class InteractiveCommand(BaseCommand, abstract=True, metaclass=ABCMeta):
 
 
 class MissingCommand(SimpleResponseCommand):
-
     condition = Never()
     private = True
 

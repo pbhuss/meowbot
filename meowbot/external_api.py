@@ -1,11 +1,9 @@
 import requests
 
-from meowbot.util import (
-    get_redis,
-    get_strava_client_id,
-    get_strava_client_secret,
-    get_config,
-)
+from meowbot.util import get_config
+from meowbot.util import get_redis
+from meowbot.util import get_strava_client_id
+from meowbot.util import get_strava_client_secret
 
 
 class StravaApi:

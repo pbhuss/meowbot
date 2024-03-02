@@ -1,11 +1,10 @@
-from meowbot.triggers import BaseCommand
 from meowbot.conditions import IsCommand
 from meowbot.constants import Emoji
 from meowbot.context import CommandContext
+from meowbot.triggers import BaseCommand
 
 
 class Love(BaseCommand):
-
     condition = IsCommand(["love"])
     help = "`love [recipient] [message]`: send meowbot love"
 

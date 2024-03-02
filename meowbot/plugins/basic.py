@@ -1,13 +1,12 @@
 import random
 
-from meowbot.triggers import SimpleResponseCommand
 from meowbot.conditions import IsCommand
 from meowbot.constants import Emoji
 from meowbot.context import CommandContext
+from meowbot.triggers import SimpleResponseCommand
 
 
 class Shrug(SimpleResponseCommand):
-
     condition = IsCommand(["shrug"])
     help = "`shrug`: shrug"
     private = True
@@ -17,7 +16,6 @@ class Shrug(SimpleResponseCommand):
 
 
 class Meow(SimpleResponseCommand):
-
     condition = IsCommand(["meow"])
     help = "`meow`: meow!"
 
@@ -26,7 +24,6 @@ class Meow(SimpleResponseCommand):
 
 
 class Poop(SimpleResponseCommand):
-
     condition = IsCommand(["poop"])
     help = "`poop`: meowbot poops"
     private = True
@@ -36,7 +33,6 @@ class Poop(SimpleResponseCommand):
 
 
 class No(SimpleResponseCommand):
-
     condition = IsCommand(["no", "bad", "stop"])
     private = True
     help = "`no`: bad kitty!"
@@ -61,7 +57,6 @@ class No(SimpleResponseCommand):
 
 
 class Hmm(SimpleResponseCommand):
-
     condition = IsCommand(["hmm", "think", "thinking"])
     help = ("`hmm`: thinking...",)
 
@@ -70,7 +65,6 @@ class Hmm(SimpleResponseCommand):
 
 
 class Nyan(SimpleResponseCommand):
-
     condition = IsCommand(["nyan"])
     help = "`nyan`: nyan"
 
@@ -89,7 +83,6 @@ class Nyan(SimpleResponseCommand):
 
 
 class High5(SimpleResponseCommand):
-
     condition = IsCommand(["high5", "highfive", "hi5"])
     help = ("`high5`: give meowbot a high five",)
     aliases = ["highfive"]
@@ -109,7 +102,6 @@ class High5(SimpleResponseCommand):
 
 
 class Catnip(SimpleResponseCommand):
-
     condition = IsCommand(["catnip"])
     help = "`catnip`: give meowbot some catnip"
 
@@ -132,7 +124,6 @@ class Catnip(SimpleResponseCommand):
 
 
 class Dog(SimpleResponseCommand):
-
     condition = IsCommand(["dog"])
     private = True
 
@@ -141,7 +132,6 @@ class Dog(SimpleResponseCommand):
 
 
 class Lanny(SimpleResponseCommand):
-
     condition = IsCommand(["lanny"])
     help = "`lanny`: LANNY! LANNY!"
     private = True

@@ -2,21 +2,22 @@ import json
 from itertools import groupby
 
 import requests
+from flask import Blueprint
+from flask import jsonify
+from flask import render_template
+from flask import request
+from flask import Response
 
 import meowbot
-
-from flask import jsonify, request, Response, Blueprint
-from flask import render_template
-
-from meowbot.models import AccessToken, Cat
-from meowbot.util import (
-    verify_signature,
-    get_queue,
-    get_config,
-    get_redis,
-    restore_default_tv_channel,
-)
-from meowbot.worker import process_request, process_interactive
+from meowbot.models import AccessToken
+from meowbot.models import Cat
+from meowbot.util import get_config
+from meowbot.util import get_queue
+from meowbot.util import get_redis
+from meowbot.util import restore_default_tv_channel
+from meowbot.util import verify_signature
+from meowbot.worker import process_interactive
+from meowbot.worker import process_request
 
 main = Blueprint("main", __name__)
 

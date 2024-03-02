@@ -4,16 +4,15 @@ import arrow
 import requests
 
 from meowbot.conditions import IsCommand
-from meowbot.triggers import SimpleResponseCommand, InteractiveCommand, BaseCommand
 from meowbot.constants import Emoji
 from meowbot.context import CommandContext
-from meowbot.util import (
-    get_default_zip_code,
-    get_redis,
-    get_location,
-    get_darksky_api_key,
-)
-
+from meowbot.triggers import BaseCommand
+from meowbot.triggers import InteractiveCommand
+from meowbot.triggers import SimpleResponseCommand
+from meowbot.util import get_darksky_api_key
+from meowbot.util import get_default_zip_code
+from meowbot.util import get_location
+from meowbot.util import get_redis
 
 USER_UNITS = "user_units"
 USER_LOCATION = "user_location"
@@ -21,7 +20,6 @@ DEFAULT_UNITS = "us"
 
 
 class Weather(SimpleResponseCommand, InteractiveCommand):
-
     condition = IsCommand(["weather", "forecast"])
     help = "`weather [location]`: get weather forecast"
 
@@ -174,7 +172,6 @@ class Weather(SimpleResponseCommand, InteractiveCommand):
 
 
 class SetLocation(BaseCommand):
-
     condition = IsCommand(["setlocation"])
     help = "`setlocation [location]`: set your default location for `weather`"
 
@@ -192,7 +189,6 @@ class SetLocation(BaseCommand):
 
 
 class SetUnits(BaseCommand):
-
     condition = IsCommand(["setunits"])
     help = "`setunits [f|c]`: set your default units for `weather`"
 

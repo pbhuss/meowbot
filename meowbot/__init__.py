@@ -1,14 +1,14 @@
 import rq_dashboard
-
-from flask import Flask, request
+from flask import Flask
+from flask import request
 from flask.logging import create_logger
 from flask_talisman import Talisman
 
 from instance.config import REDIS_URL
 from meowbot.models import db
-from meowbot.util import auth_response, check_auth
+from meowbot.util import auth_response
+from meowbot.util import check_auth
 from meowbot.views import main
-
 
 __version__ = "2.4.5"
 
