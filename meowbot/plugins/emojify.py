@@ -9,7 +9,6 @@ from meowbot.triggers import SimpleResponseCommand
 
 
 class Emojify(SimpleResponseCommand):
-
     condition = IsCommand(["emojify", "emojifi"])
     help = "`emojify`: turn any text into emojis"
 
@@ -87,7 +86,6 @@ def christmas_color():
 
 
 class Color(SimpleResponseCommand):
-
     condition = IsCommand(["color", "colour"])
     help = "`color [text]`: add some color"
 

@@ -3,12 +3,11 @@ import datetime
 import requests
 
 from meowbot.conditions import IsCommand
-from meowbot.triggers import SimpleResponseCommand
 from meowbot.context import CommandContext
+from meowbot.triggers import SimpleResponseCommand
 
 
 class XKCD(SimpleResponseCommand):
-
     condition = IsCommand(["xkcd"])
     help = "`xkcd [num]`: get today's xkcd, or a particular number"
 

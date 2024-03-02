@@ -1,12 +1,11 @@
 import requests
 
-from meowbot.triggers import SimpleResponseCommand
 from meowbot.conditions import IsCommand
 from meowbot.context import CommandContext
+from meowbot.triggers import SimpleResponseCommand
 
 
 class Fact(SimpleResponseCommand):
-
     condition = IsCommand(["fact", "catfact", "catfacts", "facts"])
     help = "`fact`: get a cat fact"
     private = True

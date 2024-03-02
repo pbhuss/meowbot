@@ -1,12 +1,11 @@
 from flask import url_for
 
-from meowbot.triggers import SimpleResponseCommand
 from meowbot.conditions import IsCommand
 from meowbot.context import CommandContext
+from meowbot.triggers import SimpleResponseCommand
 
 
 class Homepage(SimpleResponseCommand):
-
     condition = IsCommand(["homepage", "home"])
     help = "`homepage`: link to Meowbot homepage"
 
@@ -15,7 +14,6 @@ class Homepage(SimpleResponseCommand):
 
 
 class GitHub(SimpleResponseCommand):
-
     condition = IsCommand(["github", "git", "source"])
     help = "`github`: GitHub page for Meowbot"
 

@@ -2,22 +2,18 @@ import json
 import time
 
 import requests
+from geopy.distance import distance
 
-from meowbot.triggers import SimpleResponseCommand
 from meowbot.conditions import IsCommand
 from meowbot.context import CommandContext
-from meowbot.util import (
-    get_default_zip_code,
-    get_redis,
-    get_airnow_api_key,
-    get_location,
-)
-
-from geopy.distance import distance
+from meowbot.triggers import SimpleResponseCommand
+from meowbot.util import get_airnow_api_key
+from meowbot.util import get_default_zip_code
+from meowbot.util import get_location
+from meowbot.util import get_redis
 
 
 class AirQuality(SimpleResponseCommand):
-
     condition = IsCommand(["airquality", "aqi", "airnow", "air"])
     help = "`airquality [zipcode]`: get air quality information"
 
@@ -146,7 +142,6 @@ BANDS = [
 
 
 class PurpleAir(SimpleResponseCommand):
-
     condition = IsCommand(["purpleair", "purple"])
     help = "`purpleair [location]`: get PurpleAir air quality information"
 

@@ -1,5 +1,4 @@
 from enum import Enum
-from typing import List
 
 import requests
 from requests import Response
@@ -8,7 +7,6 @@ from meowbot.util import get_bot_access_token
 
 
 class SlackMethod(Enum):
-
     CHAT_POST_MESSAGE = (
         "https://slack.com/api/chat.postMessage",
         requests.post,
@@ -36,7 +34,7 @@ class SlackMethod(Enum):
         ["name", "channel", "timestamp"],
     )
 
-    def __init__(self, url: str, http_method, required_arguments: List[str]):
+    def __init__(self, url: str, http_method, required_arguments: list[str]):
         self.url = url
         self.http_method = http_method
         self.required_arguments = required_arguments

@@ -4,15 +4,14 @@ import requests
 import validators
 
 import meowbot
-from meowbot.triggers import SimpleResponseCommand
 from meowbot.conditions import IsCommand
 from meowbot.context import CommandContext
 from meowbot.models import Cat
+from meowbot.triggers import SimpleResponseCommand
 from meowbot.util import get_cat_api_key
 
 
 class CatCommand(SimpleResponseCommand):
-
     condition = IsCommand(["cat", "getcat"])
     help = "`cat [name] [number]`: gives one cat"
 
@@ -77,7 +76,6 @@ class CatCommand(SimpleResponseCommand):
 
 
 class AddCat(SimpleResponseCommand):
-
     condition = IsCommand(["addcat", "addacat", "registercat"])
     help = "`addcat [name] [photo_url]`: add a cat to the database"
 
@@ -105,7 +103,6 @@ class AddCat(SimpleResponseCommand):
 
 
 class ListCats(SimpleResponseCommand):
-
     condition = IsCommand(["listcats"])
     help = "`listcats`: see all cats available for the `cat` command"
 
@@ -116,7 +113,6 @@ class ListCats(SimpleResponseCommand):
 
 
 class RemoveCat(SimpleResponseCommand):
-
     condition = IsCommand(["removecat"])
     help = "`removecat [name] [number]`: delete a photo from the database"
 

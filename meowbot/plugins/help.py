@@ -1,13 +1,14 @@
 from flask import url_for
 
 import meowbot
-from meowbot.triggers import SimpleResponseCommand, trigger_registry, BaseCommand
 from meowbot.conditions import IsCommand
 from meowbot.context import CommandContext
+from meowbot.triggers import BaseCommand
+from meowbot.triggers import SimpleResponseCommand
+from meowbot.triggers import trigger_registry
 
 
 class Help(SimpleResponseCommand):
-
     condition = IsCommand(["help"])
     help = "`help`: shows all commands, or help for a particular command"
 

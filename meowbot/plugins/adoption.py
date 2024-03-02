@@ -2,14 +2,14 @@ import random
 
 import requests
 
-from meowbot.triggers import SimpleResponseCommand
 from meowbot.conditions import IsCommand
 from meowbot.context import CommandContext
-from meowbot.util import get_default_zip_code, get_petfinder_api_key
+from meowbot.triggers import SimpleResponseCommand
+from meowbot.util import get_default_zip_code
+from meowbot.util import get_petfinder_api_key
 
 
 class AdoptCat(SimpleResponseCommand):
-
     condition = IsCommand(["adoptcat"])
     help = "`adoptcat [zipcode]`: get cat adoption info"
 

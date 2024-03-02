@@ -1,6 +1,7 @@
 import re
 
-from meowbot.conditions import RegexMatch, Condition
+from meowbot.conditions import Condition
+from meowbot.conditions import RegexMatch
 from meowbot.constants import Emoji
 from meowbot.context import CommandContext
 from meowbot.triggers import BaseTrigger
@@ -8,7 +9,6 @@ from meowbot.util import quote_user_id
 
 
 class DatBoi(BaseTrigger):
-
     condition = RegexMatch(r"\bdat boi\b", re.IGNORECASE)
 
     def run(self, context: CommandContext):
@@ -21,7 +21,6 @@ class DatBoi(BaseTrigger):
 
 
 class Spicy(BaseTrigger):
-
     condition = RegexMatch(r"\bspicy\b", re.IGNORECASE)
 
     def run(self, context: CommandContext):
@@ -34,7 +33,6 @@ class Spicy(BaseTrigger):
 
 
 class Ugh(BaseTrigger):
-
     condition = RegexMatch(r"\bugh+\b", re.IGNORECASE)
 
     def run(self, context: CommandContext):
@@ -47,7 +45,6 @@ class Ugh(BaseTrigger):
 
 
 class Yubi(BaseTrigger):
-
     condition = RegexMatch(r"^eid[a-z]{41}$")
 
     def run(self, context: CommandContext):
@@ -76,7 +73,6 @@ class MeowbotMentioned(Condition):
 
 
 class MeowShocked(BaseTrigger):
-
     condition = MeowbotMentioned(suffix="--")
 
     def run(self, context):
@@ -89,7 +85,6 @@ class MeowShocked(BaseTrigger):
 
 
 class MeowBlush(BaseTrigger):
-
     condition = MeowbotMentioned(suffix="++")
 
     def run(self, context):

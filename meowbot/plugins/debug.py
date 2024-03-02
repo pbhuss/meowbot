@@ -1,14 +1,17 @@
 from pprint import pformat
 
-from meowbot.triggers import SimpleResponseCommand
-from meowbot.conditions import IsCommand, And, IsUser
+from meowbot.conditions import And
+from meowbot.conditions import IsCommand
+from meowbot.conditions import IsUser
 from meowbot.constants import Emoji
 from meowbot.context import CommandContext
-from meowbot.util import get_admin_user_id, get_redis, get_queue
+from meowbot.triggers import SimpleResponseCommand
+from meowbot.util import get_admin_user_id
+from meowbot.util import get_queue
+from meowbot.util import get_redis
 
 
 class Ping(SimpleResponseCommand):
-
     condition = IsCommand(["ping"])
     help = "`ping`: see if meowbot is awake"
 
@@ -17,7 +20,6 @@ class Ping(SimpleResponseCommand):
 
 
 class Debug(SimpleResponseCommand):
-
     private = True
     condition = And(IsCommand(["debug"]), IsUser([get_admin_user_id()]))
 
@@ -27,7 +29,6 @@ class Debug(SimpleResponseCommand):
 
 
 class Redis(SimpleResponseCommand):
-
     private = True
     condition = And(IsCommand(["redis"]), IsUser([get_admin_user_id()]))
 
@@ -45,7 +46,6 @@ class Redis(SimpleResponseCommand):
 
 
 class FailedQueue(SimpleResponseCommand):
-
     private = True
     condition = And(IsCommand(["failedqueue"]), IsUser([get_admin_user_id()]))
 
@@ -70,7 +70,6 @@ class FailedQueue(SimpleResponseCommand):
 
 
 class Fail(SimpleResponseCommand):
-
     private = True
     condition = And(IsCommand(["fail"]), IsUser([get_admin_user_id()]))
 

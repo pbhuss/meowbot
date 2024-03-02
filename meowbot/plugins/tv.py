@@ -1,20 +1,19 @@
 from flask import url_for
 
-from meowbot.triggers import SimpleResponseCommand
-from meowbot.conditions import IsCommand, And, IsUser
+from meowbot.conditions import And
+from meowbot.conditions import IsCommand
+from meowbot.conditions import IsUser
 from meowbot.constants import Emoji
 from meowbot.context import CommandContext
-from meowbot.util import (
-    get_channels,
-    get_redis,
-    restore_default_tv_channel,
-    quote_user_id,
-    get_admin_user_id,
-)
+from meowbot.triggers import SimpleResponseCommand
+from meowbot.util import get_admin_user_id
+from meowbot.util import get_channels
+from meowbot.util import get_redis
+from meowbot.util import quote_user_id
+from meowbot.util import restore_default_tv_channel
 
 
 class ListChannels(SimpleResponseCommand):
-
     condition = IsCommand(["listchannels", "channels", "showchannels", "tvguide"])
     help = "`listchannels`: show available Meowbot TV channels"
 
@@ -39,7 +38,6 @@ class ListChannels(SimpleResponseCommand):
 
 
 class SetChannel(SimpleResponseCommand):
-
     condition = IsCommand(["setchannel", "changechannel"])
     help = "`setchannel`: change Meowbot TV channel"
 
@@ -103,7 +101,6 @@ class SetChannel(SimpleResponseCommand):
 
 
 class TV(SimpleResponseCommand):
-
     condition = IsCommand(["tv", "television", "meowtv", "meowbottv"])
     help = "`tv`: watch Meowbot TV"
 
@@ -112,7 +109,6 @@ class TV(SimpleResponseCommand):
 
 
 class RefreshTV(SimpleResponseCommand):
-
     condition = IsCommand(["refreshtv", "refresh"])
     help = "`refreshtv`: refresh Meowbot TV"
 
@@ -122,7 +118,6 @@ class RefreshTV(SimpleResponseCommand):
 
 
 class KillTV(SimpleResponseCommand):
-
     condition = IsCommand(["killtv", "disabletv"])
     help = "`killtv`: this kills Meowbot TV"
     private = True
@@ -141,7 +136,6 @@ class KillTV(SimpleResponseCommand):
 
 
 class EnableTV(SimpleResponseCommand):
-
     condition = And(IsCommand(["enabletv"]), IsUser([get_admin_user_id()]))
     help = "`enable`: this restores Meowbot TV"
     private = True

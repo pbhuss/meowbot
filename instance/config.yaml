@@ -8,4 +8,5 @@ darksky_api_key: key_goes_here   # https://darksky.net/dev
 default_zip_code: 10001
 admin_username: admin
 admin_password: password
+admin_user_id: ASDF
 default_tv_channel: kittens

@@ -1,14 +1,13 @@
 import random
 
-from meowbot.triggers import SimpleResponseCommand
 from meowbot.conditions import IsCommand
 from meowbot.constants import Emoji
 from meowbot.context import CommandContext
+from meowbot.triggers import SimpleResponseCommand
 from meowbot.util import quote_user_id
 
 
 class Lacroix(SimpleResponseCommand):
-
     condition = IsCommand(["lacroix"])
     help = "`lacroix`: meowbot recommends a flavor"
 
