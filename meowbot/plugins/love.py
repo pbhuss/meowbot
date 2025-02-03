@@ -29,7 +29,7 @@ class Love(BaseCommand):
         channel = open_resp.channel["id"]
         extra = ""
         if len(context.args) > 1:
-            extra = f'\n>{" ".join(context.args[1:])}'
+            extra = f"\n>{' '.join(context.args[1:])}"
 
         context.api.chat_post_message(
             {

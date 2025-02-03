@@ -93,7 +93,7 @@ class Weather(SimpleResponseCommand, InteractiveCommand):
                     "type": "section",
                     "text": {
                         "type": "mrkdwn",
-                        "text": f'*Forecast for {location["display_name"]}*',
+                        "text": f"*Forecast for {location['display_name']}*",
                     },
                 },
                 {

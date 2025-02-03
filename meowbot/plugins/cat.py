@@ -24,9 +24,7 @@ class CatCommand(SimpleResponseCommand):
             if len(context.args) == 2:
                 number = context.args[1]
                 if not number.isnumeric():
-                    return {
-                        "text": "Second argument must be a number. " f"Got `{number}`"
-                    }
+                    return {"text": f"Second argument must be a number. Got `{number}`"}
                 number = int(number)
                 if 1 <= number <= num_photos:
                     offset = number - 1
@@ -67,8 +65,7 @@ class CatCommand(SimpleResponseCommand):
                     {
                         "channel": context.event.channel,
                         "text": (
-                            "Image could not be retrieved by Slack: "
-                            f"{self.image_url}"
+                            f"Image could not be retrieved by Slack: {self.image_url}"
                         ),
                     }
                 )
@@ -82,7 +79,7 @@ class AddCat(SimpleResponseCommand):
     def get_message_args(self, context: CommandContext):
         if len(context.args) != 2:
             return {
-                "text": "Expected 2 args (name, url). " f"Got {len(context.args)}",
+                "text": f"Expected 2 args (name, url). Got {len(context.args)}",
                 "thread_ts": context.event.ts,
             }
         name, url = context.args
@@ -119,7 +116,7 @@ class RemoveCat(SimpleResponseCommand):
     def get_message_args(self, context: CommandContext):
         if len(context.args) != 2:
             return context.api.chat_post_message(
-                {"text": "Expected 2 args (name, number). " f"Got {len(context.args)}"}
+                {"text": f"Expected 2 args (name, number). Got {len(context.args)}"}
             )
         name, number = context.args
         if not number.isnumeric():
