@@ -65,7 +65,7 @@ class SetChannel(SimpleResponseCommand):
             redis.incr("tvid")
             redis.set("tvchannel", channels[channel]["url"])
             return {
-                "text": f'Changing channel to {channels[channel]["name"]}!',
+                "text": f"Changing channel to {channels[channel]['name']}!",
             }
         elif len(context.args) == 2:
             channel_type, value = context.args

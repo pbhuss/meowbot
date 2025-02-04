@@ -44,7 +44,7 @@ class XKCD(SimpleResponseCommand):
                 {
                     "type": "context",
                     "elements": [
-                        {"type": "mrkdwn", "text": f'#{data["num"]}'},
+                        {"type": "mrkdwn", "text": f"#{data['num']}"},
                         {"type": "mrkdwn", "text": date},
                     ],
                 },
