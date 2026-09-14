@@ -23,9 +23,8 @@ class Help(SimpleResponseCommand):
                 ):
                     text = trigger().get_help(context)
                     return {"text": text}
-            else:
-                text = f"`{name}` is not a valid command"
-                return {"text": text}
+            text = f"`{name}` is not a valid command"
+            return {"text": text}
 
         else:
             commands = {
