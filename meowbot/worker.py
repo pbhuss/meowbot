@@ -33,5 +33,3 @@ def process_interactive(data):
                 trigger = trigger_cls()
                 if trigger.is_action_relevant(action):
                     trigger.interact(payload, action)
-
-    return

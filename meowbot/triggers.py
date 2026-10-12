@@ -94,4 +94,4 @@ class MissingCommand(SimpleResponseCommand):
         }
 
 
-from meowbot.plugins import *  # noqa
+from meowbot.plugins import *
